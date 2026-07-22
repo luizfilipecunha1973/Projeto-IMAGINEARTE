@@ -1,0 +1,1017 @@
+:root {                                  /* variáveis globais   (tokens de cor e estilo) */
+    --primary: #8D6FEA;                /* cor principal */
+    --accent: #8D6FEA;                 /* cor do botão */
+    --text-blue: #0000ff;              /* cor do parágrafo */
+    --bg-top: #ede8d0;                 /* fundo do topo */
+    --button-shadow: 1px 10px 24px rgba(4, 121, 28, 0.098);     /* sombra do botão: offset-x offset-y blur cor(opacidade) */
+}
+
+* {                                      /* Zeramento Geral*/
+    margin: 0;                           /* Zeramento margem */
+    padding: 0;                          /* espaço interno entre o conteúdo e a borda do elemento */
+    box-sizing: border-box;              /* faz a largura e altura incluir padding e borda */
+}
+
+body {                                  /* Estilos globais aplicados ao corpo da página */
+    font-family: 'Cinzel', sans-serif;  /* fonte utilizada pelo sistema */
+    color: var(--primary);              /* cor padrão do texto */
+}
+
+.conteiner{                             /* Classe .conteiner*/
+    height: 100vh;                      /* altura da tela. 100vh é o total do tamanho da tela */
+    width: 100%;                        /* largura: evitar overflow causado por 100vw */
+    position: relative;                 /* manter conteúdo acima do vídeo de fundo */
+}
+
+.conteiner-top{                         /* Classe .conteiner-top*/
+    height: 22vh;                       /* altura da tela. 100vh é o total do tamanho da tela */
+    width: 100%;                        /* largura: evitar overflow causado por 100vw */
+    position: absolute;                 /* posiciona o elemento fora do fluxo normal para poder usar top/left */
+    background: var(--bg-top);          /* fundo semi-transparente */
+}
+
+.logotipo {                             /*Parametros para a imagem*/
+    display: block;                     /* permite centralizar com margin auto */
+    position: absolute;                 /* Posiciona o elemento normalmente, permitindo ajustes com top/right/bottom/left */
+    top: 1vh;                           /* desloca a imagem 10% da altura da tela para baixo */
+    left: 0;                            /* remove deslocamento manual para a direita */
+    margin: 0 2vw 0 2vw;                /* centraliza a imagem horizontalmente */
+    width: 9%;                          /* largura img*/
+    height: auto;                       /* Comprimento img*/
+}
+
+h1 {                                    /* Configurações para o h1 */
+    position: fixed;                    /* posiciona o elemento fora do fluxo normal para poder usar top/left */
+    top: -2.5vh;                        /* desloca o título mais para cima (valor negativo sobe) */
+    left: 12vw;                         /* posicionamento lateral consolidado (use left, remova margin) */
+    font-size: clamp(2.5rem, 6vw, 5.5rem);   /* define o tamanho do título (escala melhor) */
+    font-weight: 700;                   /* define a grossura da fonte do título */    
+    letter-spacing: 2.7px;              /* define o espaçamento entre as letras do título */
+}
+
+p {                                     /* Configuraçoes do Paragrafo*/
+    position: fixed;                    /* posiciona o elemento fora do fluxo normal para poder usar top/left */
+    top: 10vh;                          /* desloca o título 20% da altura da tela para baixo */
+    left: 12vw;                         /* alinhamento lateral consistente com o título */
+    font-size: 25px;                    /* define o tamanho do texto do parágrafo */
+    font-weight: 500;                   /* define a grossura da fonte do parágrafo */
+    color: var(--text-blue);            /* define a cor do texto do parágrafo */
+    letter-spacing: 0.3px;              /* define o espaçamento entre as letras do título */    
+}
+
+.conteiner-menu {                       /* classe conteiner-menu*/
+    position: fixed;                    /* posiciona o elemento fora do fluxo normal para poder usar top/left */
+    top: 12.5vh;                        /* desloca o menu 10% da altura da tela para baixo */
+    left: 10vw;                         /* desloca o menu 10% da largura da tela para a direita */    
+    font-weight: 600;                   /* define a grossura da fonte do título */
+}
+
+.menu {                                 /* Configurações p/ o menu*/
+    text-decoration: none;              /* remove o sublinhado dos links */
+    font-size: 25px;                    /* define o tamanho dos links */
+    cursor: pointer;                    /* muda o cursor para ponteiro ao passar por cima */
+}
+
+header {                                /* Configurações para o header*/
+    display: flex;                      /* transforma o header em um container flex */
+    justify-content: space-around;      /* distribui os itens com espaço ao redor */
+    gap: 115px;                         /* aumenta o espaço entre os links */
+    padding: 4vh 2vw;                   /* adiciona espaçamento interno no header */
+    position: relative;                 /* SERV. Permite posicionar o submenu */
+}
+
+.menu-item {                            /* SERV. Container do item do menu */
+    position: relative;                 /* SERV. Referência para posicionamento absoluto do submenu */
+}
+
+.services-menu:hover .submenu,         /* SERV. Exibe o submenu ao passar o mouse */
+.services-menu:focus-within .submenu,  /* SERV. Mantém o submenu visível ao navegar pelo teclado */
+.services-menu.open .submenu,          /* SERV. Mantém o submenu aberto ao clicar */
+.submenu:hover {                       /* SERV. Mantém o submenu aberto ao passar o mouse sobre ele */
+    display: block;                     /* SERV. Torna a caixa do submenu visível */
+}
+
+.submenu {                              /* SERV. Caixa do submenu */
+    display: none;                      /* SERV. Mantém o submenu oculto por padrão */
+    position: absolute;                 /* SERV. Posiciona o submenu em relação ao item pai */
+    top: calc(100% + 10px);             /* SERV. Coloca o submenu logo abaixo do menu principal */
+    left: 0;                            /* SERV. Alinha o submenu à esquerda do item pai */
+    background: rgba(255, 255, 255, 0.95); /* SERV. Define o fundo levemente translúcido */
+    padding: 10px 15px;                 /* SERV. Adiciona espaço interno ao submenu */
+    border-radius: 10px;                /* SERV. Arredonda os cantos da caixa */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* SERV. Cria sombra para destacar o submenu */
+    min-width: 220px;                   /* SERV. Garante largura mínima para os links */
+    z-index: 5;                         /* SERV. Mantém o submenu acima dos demais elementos */
+    pointer-events: auto;               /* SERV. Permite interação com os itens do submenu */
+}
+
+.submenu a {                            /* SERV. Estilo dos links do submenu */
+    display: block;                     /* SERV. Faz o link ocupar a linha inteira */
+    color: #1f1f1f;                   /* SERV. Define a cor padrão do link */
+    text-decoration: none;              /* SERV. Remove o sublinhado do link */
+    font-size: 18px;                    /* SERV. Define o tamanho do texto */
+    padding: 8px 0;                     /* SERV. Adiciona espaço vertical entre os itens */
+    white-space: nowrap;                /* SERV. Mantém o texto em uma única linha */
+}
+
+.submenu a:hover {                      /* SERV. Efeito ao passar o mouse */
+    color: var(--primary);              /* SERV. Destaca o link ao passar o mouse */
+}
+
+button {                                /* Configurações para o botão */
+    font-size: 23px;                    /* define o tamanho do texto do parágrafo */
+    position: fixed;                    /* transforma o botão em um elemento de bloco */
+    top: 15vh;                          /* define a posição vertical do botão */
+    left: 73vw;                         /* define a posição horizontal do botão */
+    width: 200px;                       /* define a largura do botão */
+    height: 40px;                       /* define a altura do botão */
+    background: var(--accent);          /* define a cor de fundo do botão */
+    box-shadow: var(--button-shadow);   /* adiciona sombra ao botão */
+    border: none;                       /* remove a borda do botão */
+    border-radius: 60px;                /* define o tamanho do texto do botão */
+    line-height: 36px;                  /* define a altura da linha do botão */
+    text-align: center;                 /* centraliza o texto do botão */
+    color: #ffffff;                   /* define a cor do texto do botão */
+    cursor: pointer;                    /* muda o cursor para ponteiro */
+    margin: 0;                          /* margem removida por redundância com posicionamento */
+}
+
+.menu:hover,                            /* Efeito visual ao passar o mouse sobre o link do menu */
+button:hover {                          /* BOTAO. Estado hover compartilhado */
+    opacity: 0.8;                       /* reduz a opacidade ao passar o mouse */
+}
+
+.menu:active,                           /* Efeito visual ao clicar no link do menu */
+button:active {                         /* BOTAO. Estado active compartilhado */
+    opacity: 0.5;                       /* reduz a opacidade ao clicar */
+}
+
+/* Estilos do vídeo de fundo */
+.bg-video {                             /* VIDEO. Container do vídeo de fundo */
+    position: fixed;                    /* fixa o vídeo relativo à janela (não se move ao rolar) */
+    top: 15vh;                          /* distância do topo da janela */
+    left: 0;                            /* alinhado à esquerda da janela */
+    width: 100%;                        /* largura igual à largura da janela */
+    height: 85vh;                       /* altura relativa à janela (85% da altura) */
+    object-fit: cover;                  /* cobre toda a área mantendo proporção */
+    pointer-events: none;               /* permite clicar nos elementos sobre o vídeo */
+    z-index: 0;                         /* atrás do conteúdo */
+}
+
+.quem-somos-section {                   /* QUEM Estilos da seção Quem Somos */
+    display: none;                      /* QUEM Inicialmente escondida */
+    position: fixed;                    /* QUEM Posiciona a caixa em relação à tela */
+    top: 55%;                           /* QUEM Centraliza verticalmente rebaixando 5vh */
+    left: 50%;                          /* QUEM Centraliza horizontalmente */
+    transform: translate(-50%, -50%);   /* QUEM Ajusta para o centro exato */
+    width: calc(100% - 20vw);           /* QUEM Deixa margem de 10vw de cada lado */
+    max-width: 900px;                   /* QUEM Limita a largura máxima */
+    padding: 3rem 2.5rem;               /* QUEM Espaço interno */
+    background-color: rgba(141,111,234, 0.95); /* QUEM Fundo da caixa na cor e transparência do portfólio */
+    border-radius: 20px;                /* QUEM Cantos arredondados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* QUEM Sombra da caixa */
+    z-index: 2;                         /* QUEM Acima do vídeo */
+    text-align: justify;                /* QUEM Texto justificado */
+    line-height: 1.7;                   /* QUEM Altura da linha */
+    cursor: default;                    /* QUEM Remove o cursor de texto */
+    user-select: none;                  /* QUEM Impede seleção de texto */
+    caret-color: transparent;           /* QUEM Esconde o cursor piscando */
+}
+
+.quem-somos-section h2 {                /* QUEM Estilos do título da seção Quem Somos */
+    font-size: 2rem;                    /* QUEM Tamanho da fonte */
+    margin-top: -3vw;                   /* QUEM Espaço superior de -3vw */
+    margin-bottom: 15px;                /* QUEM Espaço abaixo do título */
+    text-align: center;                 /* QUEM Centraliza o título */
+    color: #ffffff;                     /* QUEM Define a cor do título em branco para contraste com o fundo roxo */
+}
+
+.quem-somos-section p {                 /* QUEM Estilos do texto interno da seção Quem Somos */
+    position: static;                   /* QUEM Remove o posicionamento fixo do p geral */
+    font-size: 1.1rem;                  /* QUEM Tamanho do texto */
+    color: #ffffff;                     /* QUEM Define a cor do texto em branco para contraste com o fundo roxo */
+    letter-spacing: 0.3px;              /* QUEM Espaçamento entre letras */
+}
+
+.portfolio-section {                   /* PORT. Seção do portfólio */
+    display: none;                      /* PORT. Inicialmente escondida */
+    position: fixed;                    /* PORT. Posição fixa na tela */
+    top: 22vh;                          /* PORT. Distância do topo */
+    left: 0;                            /* PORT. Distância da esquerda */
+    width: 100vw;                       /* PORT. Largura total para centralizar */
+    height: 78vh;                       /* PORT. Altura disponível abaixo do menu */
+    display: none;                      /* PORT. Mantém a seção oculta até ser acionada */
+    justify-content: center;            /* PORT. Centraliza horizontalmente */
+    align-items: center;                /* PORT. Centraliza verticalmente */
+    z-index: 3;                         /* PORT. Acima do vídeo */
+}
+
+.portfolio-box {                        /* PORT. Caixa contentora do portfólio */
+    background-color: rgba(141,111,234, 0.95); /* PORT. Fundo da caixa no padrão do sistema */
+    padding: 2vh 1vw;                   /* PORT. Espaço interno superior/inferior 2vh e lateral 2vw */
+    border-radius: 20px;                /* PORT. Cantos arredondados no padrão do sistema */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* PORT. Sombra da caixa no padrão do sistema */
+    display: flex;                      /* PORT. Transforma em container flex para alinhar o conteúdo */
+    justify-content: center;            /* PORT. Centraliza horizontalmente o conteúdo */
+    align-items: center;                /* PORT. Centraliza verticalmente o conteúdo */
+}
+
+.portfolio-img {                        /* PORT. Estilo da imagem do portfólio */
+    max-width: 72vw;                    /* PORT. 80vw reduzido em 10% */
+    max-height: 72vh;                   /* PORT. 80vh reduzido em 10% */
+    object-fit: contain;                /* PORT. Mantém proporção da imagem */
+    display: block;                     /* PORT. Remove espaço extra abaixo da imagem */
+    border-radius: 10px;                /* PORT. Arredonda os cantos da imagem acompanhando a moldura */
+}
+
+.usinagem-artesanato-window {           /* ART. Janela da usinagem de artesanato */
+    display: none;                      /* ART. Inicia fechada */
+    position: fixed;                    /* ART. Fixa em relação à tela */
+    top: 25vh;                          /* ART. Distância exata do topo */
+    bottom: 5vh;                        /* ART. Distância exata da base */
+    left: 4.5vw;                        /* ART. Distância lateral esquerda */
+    right: 4.5vw;                       /* ART. Distância lateral direita */
+    background-color: #8D6FEA;          /* ART. Cor solicitada da janela */
+    border-radius: 20px;                /* ART. Mantém padrão visual arredondado */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* ART. Sombra para destaque */
+    z-index: 4;                         /* ART. Acima dos demais blocos de conteúdo */
+    padding: 1.2rem 1.5rem;             /* ART. Espaçamento interno */
+    overflow-y: auto;                   /* ART. Permite rolar quando houver muitos vídeos */
+}
+
+.usinagem-artesanato-window h2 {        /* ART. Título da janela */
+    color: #ffffff;                     /* ART. Define título em branco para contraste */
+    font-size: 1.8rem;                  /* ART. Define tamanho de destaque do título */
+    text-align: center;                 /* ART. Centraliza o texto do título */
+    margin-bottom: 1rem;                /* ART. Cria espaço abaixo do título */
+}
+
+.artesanato-grid {                      /* ART. Grid com 3 vídeos por linha */
+    display: grid;                      /* ART. Ativa layout em grade para os cartões */
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* ART. Distribui 3 colunas responsivas */
+    gap: 1rem;                          /* ART. Define espaçamento entre cartões */
+}
+
+.artesanato-card {                      /* ART. Cartão de vídeo + descrição */
+    background-color: rgba(255, 255, 255, 0.16); /* ART. Fundo translúcido do cartão */
+    border: 1px solid rgba(255, 255, 255, 0.35); /* ART. Borda suave para separação visual */
+    border-radius: 12px;                /* ART. Arredonda cantos do cartão */
+    padding: 0.75rem;                   /* ART. Adiciona espaço interno no cartão */
+    backdrop-filter: blur(2px);         /* ART. Aplica leve desfoque no fundo do cartão */
+}
+
+.artesanato-card video {                /* ART. Vídeo ocupa a largura do cartão */
+    width: 100%;                        /* ART. Faz o vídeo preencher a largura do cartão */
+    height: auto;                       /* ART. Mantém proporção natural do vídeo */
+    border-radius: 8px;                 /* ART. Arredonda cantos do player */
+    background: #000000;                /* ART. Exibe fundo preto antes da reprodução */
+    display: block;                     /* ART. Remove espaçamento inline do elemento vídeo */
+}
+
+.video-trigger {                        /* VIDEO. Link clicável da miniatura */
+    display: block;                     /* VIDEO. Faz a área clicável ocupar toda a largura */
+    text-decoration: none;              /* VIDEO. Remove sublinhado padrão de link */
+    cursor: pointer;                    /* VIDEO. Mostra que miniatura é clicável */
+    position: relative;                 /* VIDEO. Permite posicionar ícone sobre a miniatura */
+    border-radius: 8px;                 /* VIDEO. Mantém cantos arredondados no link */
+    overflow: hidden;                   /* VIDEO. Evita que o ícone extrapole os cantos */
+}
+
+.video-thumb {                          /* VIDEO. Miniatura visual do vídeo no card */
+    pointer-events: none;               /* VIDEO. Evita interação/controles no player pequeno */
+}
+
+.video-play-badge {                     /* VIDEO. Selo visual de play sobre miniatura */
+    position: absolute;                 /* VIDEO. Sobrepõe ícone no centro da miniatura */
+    top: 50%;                           /* VIDEO. Posiciona verticalmente no meio */
+    left: 50%;                          /* VIDEO. Posiciona horizontalmente no meio */
+    transform: translate(-50%, -50%);   /* VIDEO. Centraliza com precisão */
+    width: 54px;                        /* VIDEO. Largura do selo circular */
+    height: 54px;                       /* VIDEO. Altura do selo circular */
+    border-radius: 999px;               /* VIDEO. Formato circular do selo */
+    display: grid;                      /* VIDEO. Centraliza o símbolo dentro do selo */
+    place-items: center;                /* VIDEO. Alinhamento total do símbolo */
+    font-size: 1.25rem;                 /* VIDEO. Tamanho do símbolo de play */
+    color: #ffffff;                     /* VIDEO. Cor branca para contraste */
+    background: rgba(0, 0, 0, 0.46);    /* VIDEO. Fundo translúcido para legibilidade */
+    border: 1px solid rgba(255, 255, 255, 0.45); /* VIDEO. Borda suave para destaque */
+    pointer-events: none;               /* VIDEO. Mantém clique passando para o link */
+}
+
+.video-trigger:hover .video-play-badge { /* VIDEO. Feedback visual ao passar mouse */
+    background: rgba(0, 0, 0, 0.62);    /* VIDEO. Escurece levemente o selo no hover */
+}
+
+.video-trigger:focus-visible {          /* VIDEO. Destaque de acessibilidade por teclado */
+    outline: 3px solid #ffffff;         /* VIDEO. Exibe contorno visível ao focar */
+    outline-offset: 2px;                /* VIDEO. Afasta contorno da miniatura */
+}
+
+.video-title {                          /* ART. Título placeholder do vídeo */
+    color: #ffffff;                     /* ART. Mantém texto legível em fundo escuro */
+    font-size: 1rem;                    /* ART. Define tamanho padrão do título */
+    margin: 0.55rem 0 0.45rem;          /* ART. Ajusta espaçamento vertical do título */
+}
+
+.video-hint {                           /* VIDEO. Texto orientando abertura ampliada */
+    display: block;                     /* VIDEO. Faz a dica ocupar linha própria */
+    margin-top: 0.45rem;                /* VIDEO. Cria espaço entre miniatura e dica */
+    color: #ffffff;                     /* VIDEO. Mantém legibilidade no cartão */
+    font-size: 0.88rem;                 /* VIDEO. Define tamanho discreto da dica */
+    opacity: 0.9;                       /* VIDEO. Suaviza presença visual do texto */
+    text-align: center;                 /* VIDEO. Centraliza a dica abaixo da miniatura */
+}
+
+@media (max-width: 1024px) {            /* ART. Breakpoint para tablets */
+    .artesanato-grid {                  /* ART. Aplica ajuste de colunas no tablet */
+        grid-template-columns: repeat(2, minmax(0, 1fr)); /* ART. Reduz para 2 colunas em tablets */
+    }
+}
+
+@media (max-width: 640px) {             /* ART. Breakpoint para celulares */
+    .artesanato-grid {                  /* ART. Aplica ajuste de colunas no celular */
+        grid-template-columns: 1fr;     /* ART. Exibe 1 coluna em telas pequenas */
+    }
+}
+
+.residencial-window {                   /* RES. Janela pequena com aviso temporário */
+    display: none;                      /* RES. Inicia oculta até interação do usuário */
+    position: fixed;                    /* RES. Fixa a janela em relação à tela */
+    top: 38vh;                          /* RES. Posiciona verticalmente no centro inferior */
+    left: 50%;                          /* RES. Posiciona horizontalmente no meio */
+    transform: translateX(-50%);        /* RES. Corrige centralização horizontal exata */
+    min-width: 280px;                   /* RES. Garante largura mínima de leitura */
+    max-width: 80vw;                    /* RES. Limita largura em telas menores */
+    padding: 1.2rem 1.8rem;             /* RES. Define espaçamento interno do aviso */
+    background-color: #8D6FEA;          /* RES. Mantém cor padrão visual do site */
+    border-radius: 14px;                /* RES. Arredonda cantos da janela */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* RES. Destaca a janela com sombra */
+    z-index: 5;                         /* RES. Mantém acima de elementos de conteúdo */
+    text-align: center;                 /* RES. Centraliza o texto interno */
+}
+
+.residencial-window p {                 /* RES. Texto do aviso */
+    position: static;                   /* RES. Mantém fluxo normal dentro da caixa */
+    color: #ffffff;                     /* RES. Aplica cor branca para contraste */
+    font-size: 1.35rem;                 /* RES. Define tamanho de destaque do aviso */
+    font-weight: 700;                   /* RES. Usa peso forte para enfatizar mensagem */
+    margin: 0;                          /* RES. Remove margens padrão do parágrafo */
+    letter-spacing: 0.5px;              /* RES. Ajusta espaçamento entre letras */
+}
+
+.contact-modal {                        /* CONTATO. Fundo escurecido da caixa */
+    display: none;                      /* CONTATO. Inicia oculto até ser aberto via JS */
+    position: fixed;                    /* CONTATO. Cobre a tela inteira independentemente do scroll */
+    inset: 0;                           /* CONTATO. Define topo/direita/base/esquerda como 0 */
+    background: rgba(0, 0, 0, 0.45);    /* CONTATO. Cria camada escura por trás da caixa */
+    z-index: 20;                        /* CONTATO. Mantém o modal acima dos demais elementos */
+    align-items: center;                /* CONTATO. Centraliza verticalmente a caixa interna */
+    justify-content: center;            /* CONTATO. Centraliza horizontalmente a caixa interna */
+    padding: 1rem;                      /* CONTATO. Garante respiro lateral em telas pequenas */
+}
+
+.contact-box {                          /* CONTATO. Caixa central de contatos */
+    width: min(92vw, 760px);            /* CONTATO. Limita largura máxima e adapta ao viewport */
+    max-height: 86vh;                   /* CONTATO. Evita que a caixa ultrapasse a altura da tela */
+    overflow-y: auto;                   /* CONTATO. Permite rolagem vertical quando necessário */
+    overflow-x: hidden;                 /* CONTATO. Evita barra horizontal indesejada */
+    background-color: rgba(141, 111, 234, 0.98); /* CONTATO. Define fundo principal do modal */
+    border-radius: 20px;                /* CONTATO. Arredonda os cantos da caixa */
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35); /* CONTATO. Cria profundidade visual */
+    padding: 1.4rem 1.4rem 1.6rem;      /* CONTATO. Ajusta espaçamento interno da caixa */
+    position: relative;                 /* CONTATO. Permite posicionar botão de fechar internamente */
+    display: flex;                      /* CONTATO. Usa layout flex para organizar conteúdo */
+    flex-direction: column;             /* CONTATO. Empilha itens verticalmente */
+    gap: 0.7rem;                        /* CONTATO. Define espaçamento entre blocos internos */
+    transform: translateY(3vh);         /* CONTATO. Abaixa a caixa 3vh em relação ao centro */
+}
+
+.contact-box h2 {                       /* CONTATO. Título central Contatos */
+    margin: 0.2rem 0 0.5rem;            /* CONTATO. Define espaçamento do título no topo */
+    text-align: center;                 /* CONTATO. Centraliza o texto do título */
+    color: #ffffff;                     /* CONTATO. Mantém cor clara para contraste */
+    font-size: clamp(1.6rem, 2.6vw, 2rem); /* CONTATO. Escala tamanho conforme largura da tela */
+}
+
+.contact-box a,                         /* CONTATO. Seletor de links internos */
+.contact-box span,                      /* CONTATO. Seletor de textos em span */
+.contact-group-title {                  /* CONTATO. Tipografia interna da caixa */
+    color: #ffffff;                     /* CONTATO. Define cor padrão dos textos internos */
+    font-size: 1.03rem;                 /* CONTATO. Define tamanho base da tipografia */
+    position: static;                   /* CONTATO. Mantém fluxo natural dos textos */
+    letter-spacing: 0.2px;              /* CONTATO. Ajusta espaçamento entre caracteres */
+    line-height: 1.45;                  /* CONTATO. Melhora legibilidade em blocos de texto */
+}
+
+.contact-box a {                        /* CONTATO. Links com destaque */
+    text-decoration: underline;         /* CONTATO. Exibe sublinhado padrão para links */
+    text-decoration-thickness: 1px;     /* CONTATO. Controla espessura do sublinhado */
+    text-underline-offset: 2px;         /* CONTATO. Afasta sublinhado do texto */
+    word-break: break-word;             /* CONTATO. Quebra textos longos sem estourar layout */
+}
+
+.contact-box a.contact-media-row {      /* CONTATO. Remove sublinhado da linha clicável do WhatsApp */
+    text-decoration: none;              /* CONTATO. Mantém visual limpo no bloco com ícone */
+}
+
+.contact-box a.contact-no-underline {   /* CONTATO. Remove sublinhado de links específicos */
+    text-decoration: none;              /* CONTATO. Desativa decoração para links selecionados */
+}
+
+.contact-group-title {                  /* CONTATO. Títulos de grupo */
+    font-weight: 700;                   /* CONTATO. Destaca os títulos de cada seção */
+    margin-top: 0.25rem;                /* CONTATO. Cria leve separação acima do título */
+}
+
+.contact-media-row {                    /* CONTATO. Linha ícone + conteúdo */
+    display: flex;                      /* CONTATO. Alinha ícone e texto no mesmo eixo */
+    align-items: center;                /* CONTATO. Centraliza verticalmente os itens da linha */
+    gap: 0.65rem;                       /* CONTATO. Espaçamento horizontal entre ícone e texto */
+}
+
+.contact-phone-row {                    /* CONTATO. Celular e WhatsApp lado a lado */
+    justify-content: center;            /* CONTATO. Centraliza os dois blocos de telefone */
+    gap: 5vw;                           /* CONTATO. Define distância entre os blocos */
+    flex-wrap: wrap;                    /* CONTATO. Permite quebra para nova linha em telas pequenas */
+}
+
+.contact-instagram-row {                /* CONTATO. Instagram centralizado abaixo */
+    justify-content: center;            /* CONTATO. Centraliza a linha do Instagram */
+}
+
+.contact-icon {                         /* CONTATO. Ícones de Instagram/Celular/WhatsApp */
+    width: calc(28px + 3vh);            /* CONTATO. Define largura responsiva dos ícones */
+    height: calc(28px + 3vh);           /* CONTATO. Define altura responsiva dos ícones */
+    object-fit: contain;                /* CONTATO. Evita distorção das imagens */
+    flex: 0 0 calc(28px + 3vh);         /* CONTATO. Mantém tamanho fixo no container flex */
+}
+
+.contact-instagram-icon {               /* CONTATO. Instagram ampliado sem distorção */
+    width: calc((28px + 3vh) + 5vw);    /* CONTATO. Amplia ícone do Instagram para destaque */
+    height: auto;                       /* CONTATO. Preserva proporção da imagem */
+    flex: 0 0 auto;                     /* CONTATO. Impede compressão do ícone no layout flex */
+}
+
+.contact-close {                        /* CONTATO. Botão de fechar no canto */
+    position: absolute;                 /* CONTATO. Posiciona o botão dentro da caixa */
+    top: 0.7rem;                        /* CONTATO. Distância do topo interno da caixa */
+    right: 0.7rem;                      /* CONTATO. Distância da borda direita da caixa */
+    width: 34px;                        /* CONTATO. Define largura do botão circular */
+    height: 34px;                       /* CONTATO. Define altura do botão circular */
+    border: none;                       /* CONTATO. Remove borda padrão do botão */
+    border-radius: 999px;               /* CONTATO. Garante formato completamente arredondado */
+    background: rgba(255, 255, 255, 0.22); /* CONTATO. Fundo translúcido do botão */
+    color: #ffffff;                     /* CONTATO. Cor branca para o ícone X */
+    font-size: 1.1rem;                  /* CONTATO. Tamanho do caractere de fechamento */
+    line-height: 1;                     /* CONTATO. Ajusta alinhamento vertical do caractere */
+    cursor: pointer;                    /* CONTATO. Mostra interação ao passar o mouse */
+}
+
+.contact-close:hover {                  /* CONTATO. Estado hover do botão de fechar */
+    background: rgba(255, 255, 255, 0.32); /* CONTATO. Clareia o fundo ao passar o mouse */
+}
+
+.video-modal {                          /* VIDEO. Fundo escurecido para o player ampliado */
+    display: none;                      /* VIDEO. Inicia oculto e abre via JavaScript */
+    position: fixed;                    /* VIDEO. Cobre toda a tela independentemente do scroll */
+    inset: 0;                           /* VIDEO. Define topo/direita/base/esquerda como 0 */
+    background: rgba(0, 0, 0, 0.72);    /* VIDEO. Escurece o fundo para focar na reprodução */
+    z-index: 30;                        /* VIDEO. Fica acima dos demais modais e conteúdos */
+    align-items: center;                /* VIDEO. Centraliza verticalmente a caixa interna */
+    justify-content: center;            /* VIDEO. Centraliza horizontalmente a caixa interna */
+    padding: 1.2rem 4.5vw;              /* VIDEO. Mantém largura alinhada à janela mãe de usinagem */
+    opacity: 0;                         /* VIDEO. Estado inicial para animação de entrada */
+    transition: opacity 0.2s ease;      /* VIDEO. Suaviza abertura e fechamento do overlay */
+}
+
+.video-modal.is-open {                  /* VIDEO. Estado visível com animação aplicada */
+    opacity: 1;                         /* VIDEO. Torna overlay totalmente visível */
+}
+
+.video-modal-box {                      /* VIDEO. Caixa de exibição ampliada */
+    width: fit-content;                 /* VIDEO. Ajusta largura da caixa ao conteúdo do vídeo */
+    max-width: 91vw;                    /* VIDEO. Limita largura para nunca estourar a tela */
+    min-width: min(320px, 91vw);        /* VIDEO. Evita caixa pequena demais em vídeos estreitos */
+    max-height: 92vh;                   /* VIDEO. Limita altura para caber na tela */
+    background-color: rgba(141, 111, 234, 0.98); /* VIDEO. Mantém identidade visual do site */
+    border-radius: 20px;                /* VIDEO. Arredonda cantos da janela ampliada */
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.35); /* VIDEO. Destaca a caixa sobre o fundo */
+    padding: 1rem 1rem 1.2rem;          /* VIDEO. Cria respiro interno para título e player */
+    position: relative;                 /* VIDEO. Permite posicionar o botão de fechar */
+    display: flex;                      /* VIDEO. Organiza título e player em coluna */
+    flex-direction: column;             /* VIDEO. Empilha elementos verticalmente */
+    align-items: center;                /* VIDEO. Mantém player e ações centralizados na caixa */
+    gap: 0.7rem;                        /* VIDEO. Define espaçamento entre título e player */
+    transform: translateY(10px) scale(0.985); /* VIDEO. Estado inicial da animação de entrada */
+    opacity: 0.98;                      /* VIDEO. Suaviza entrada da caixa */
+    transition: transform 0.2s ease, opacity 0.2s ease; /* VIDEO. Anima abertura/fechamento */
+}
+
+.video-modal-box.is-open {              /* VIDEO. Estado final da caixa após abrir */
+    transform: translateY(0) scale(1);  /* VIDEO. Restaura posição/tamanho finais */
+    opacity: 1;                         /* VIDEO. Exibe caixa em opacidade total */
+}
+
+.video-modal-box h2 {                   /* VIDEO. Título da visualização ampliada */
+    margin: 0;                          /* VIDEO. Remove margens padrão do título */
+    text-align: center;                 /* VIDEO. Centraliza texto do título */
+    color: #ffffff;                     /* VIDEO. Mantém contraste com fundo da caixa */
+    font-size: clamp(1.2rem, 2.4vw, 1.8rem); /* VIDEO. Escala fonte conforme largura da tela */
+}
+
+.video-modal-counter {                  /* VIDEO. Indicador de posição na playlist */
+    margin: 0;                          /* VIDEO. Remove margem padrão do parágrafo */
+    color: #ffffff;                     /* VIDEO. Mantém contraste com fundo do modal */
+    font-size: 0.95rem;                 /* VIDEO. Tamanho discreto do contador */
+    letter-spacing: 0.3px;              /* VIDEO. Melhora legibilidade do indicador */
+    position: static;                   /* VIDEO. Mantém fluxo normal na caixa do modal */
+}
+
+#video-modal-player {                   /* VIDEO. Player principal ampliado */
+    width: auto;                        /* VIDEO. Usa largura nativa do arquivo quando possível */
+    max-width: 100%;                    /* VIDEO. Encolhe para caber dentro da caixa responsiva */
+    height: auto;                       /* VIDEO. Mantém proporção natural do arquivo */
+    max-height: calc(92vh - 160px);     /* VIDEO. Reserva espaço para título e botões de navegação */
+    object-fit: contain;                /* VIDEO. Evita distorção em qualquer proporção */
+    border-radius: 12px;                /* VIDEO. Arredonda cantos do player */
+    background: #000000;                /* VIDEO. Exibe fundo preto fora da área de imagem */
+    display: block;                     /* VIDEO. Remove espaçamentos de elemento inline */
+    opacity: 1;                         /* VIDEO. Opacidade normal do player */
+    transition: opacity 0.16s ease;     /* VIDEO. Suaviza troca entre vídeos da playlist */
+}
+
+#video-modal-player.is-switching {      /* VIDEO. Estado visual durante troca de mídia */
+    opacity: 0.4;                       /* VIDEO. Fade rápido para indicar transição */
+}
+
+.video-modal-close {                    /* VIDEO. Botão de fechar no canto superior */
+    position: absolute;                 /* VIDEO. Posiciona o botão dentro da caixa */
+    top: 0.6rem;                        /* VIDEO. Distância superior interna */
+    right: 0.6rem;                      /* VIDEO. Distância da borda direita */
+    width: 34px;                        /* VIDEO. Largura do botão circular */
+    height: 34px;                       /* VIDEO. Altura do botão circular */
+    border: none;                       /* VIDEO. Remove borda padrão */
+    border-radius: 999px;               /* VIDEO. Forma circular do botão */
+    background: rgba(255, 255, 255, 0.22); /* VIDEO. Fundo translúcido no estado normal */
+    color: #ffffff;                     /* VIDEO. Cor branca do caractere de fechar */
+    font-size: 1.1rem;                  /* VIDEO. Tamanho do caractere de fechar */
+    line-height: 1;                     /* VIDEO. Ajusta alinhamento vertical do caractere */
+    cursor: pointer;                    /* VIDEO. Mostra estado clicável */
+}
+
+.video-modal-close:hover {              /* VIDEO. Estado hover do botão de fechar */
+    background: rgba(255, 255, 255, 0.32); /* VIDEO. Clareia fundo ao passar o mouse */
+}
+
+.video-modal-actions {                  /* VIDEO. Linha de botões de navegação */
+    display: flex;                      /* VIDEO. Alinha botões no eixo horizontal */
+    justify-content: center;            /* VIDEO. Centraliza botões na janela */
+    gap: 0.7rem;                        /* VIDEO. Define espaço entre Anterior e Próximo */
+}
+
+.video-modal-nav {                      /* VIDEO. Estilo base dos botões de navegação */
+    min-width: 120px;                   /* VIDEO. Garante largura confortável do botão */
+    height: 38px;                       /* VIDEO. Mantém altura compacta e clicável */
+    border: none;                       /* VIDEO. Remove borda padrão do navegador */
+    border-radius: 999px;               /* VIDEO. Formato arredondado alinhado ao design */
+    background: rgba(255, 255, 255, 0.2); /* VIDEO. Fundo translúcido no estado normal */
+    color: #ffffff;                     /* VIDEO. Cor do texto para contraste */
+    font-size: 0.95rem;                 /* VIDEO. Tamanho de fonte equilibrado */
+    font-family: 'Cinzel', sans-serif;  /* VIDEO. Mantém consistência tipográfica do site */
+    cursor: pointer;                    /* VIDEO. Mostra que o botão é interativo */
+}
+
+.video-modal-nav:hover {                /* VIDEO. Feedback visual ao passar mouse */
+    background: rgba(255, 255, 255, 0.32); /* VIDEO. Clareia o botão em hover */
+}
+
+.video-modal-nav:disabled {             /* VIDEO. Estado desabilitado nos extremos da lista */
+    opacity: 0.45;                      /* VIDEO. Indica visualmente indisponibilidade */
+    cursor: not-allowed;                /* VIDEO. Ajusta cursor para estado bloqueado */
+}
+
+@media (max-width: 640px) {             /* CONTATO. Ajustes responsivos para telas pequenas */
+    .contact-box {                      /* CONTATO. Ajusta caixa no mobile */
+        width: 94vw;                     /* CONTATO. Usa maior largura útil em celulares */
+        padding: 1.2rem 1rem 1.3rem;     /* CONTATO. Reduz preenchimento interno no mobile */
+    }
+
+    .contact-box a,                     /* CONTATO. Ajusta links no mobile */
+    .contact-box span,                  /* CONTATO. Ajusta spans no mobile */
+    .contact-group-title {              /* CONTATO. Ajusta títulos de grupo no mobile */
+        font-size: 0.96rem;              /* CONTATO. Diminui a tipografia para caber melhor */
+    }
+
+    .contact-icon {                     /* CONTATO. Ajusta ícones padrão no mobile */
+        width: calc(24px + 3vh);         /* CONTATO. Reduz largura dos ícones no mobile */
+        height: calc(24px + 3vh);        /* CONTATO. Reduz altura dos ícones no mobile */
+        flex-basis: calc(24px + 3vh);    /* CONTATO. Ajusta base flex para o novo tamanho */
+    }
+
+    .contact-instagram-icon {           /* CONTATO. Ajusta ícone do Instagram no mobile */
+        width: calc((24px + 3vh) + 5vw); /* CONTATO. Ajusta tamanho do Instagram no mobile */
+        height: auto;                    /* CONTATO. Preserva proporção do ícone no mobile */
+        flex-basis: auto;                /* CONTATO. Permite base automática no layout flex */
+    }
+
+    .video-modal {                      /* VIDEO. Ajusta margens do overlay no mobile */
+        padding: 0.9rem 3vw;            /* VIDEO. Aproveita mais espaço útil em telas pequenas */
+    }
+
+    .video-modal-box {                  /* VIDEO. Ajusta caixa ampliada no mobile */
+        width: fit-content;             /* VIDEO. Mantém ajuste pelo tamanho do vídeo no mobile */
+        max-width: 94vw;                /* VIDEO. Mantém limite coerente no mobile */
+        padding: 0.9rem 0.9rem 1rem;    /* VIDEO. Reduz espaçamentos internos no mobile */
+    }
+
+    .video-modal-nav {                  /* VIDEO. Ajusta botões de navegação no mobile */
+        min-width: 108px;               /* VIDEO. Reduz largura sem comprometer toque */
+        height: 36px;                   /* VIDEO. Reduz altura para caber melhor em telas menores */
+        font-size: 0.9rem;              /* VIDEO. Ajusta texto para proporção mobile */
+    }
+
+    #video-modal-player {               /* VIDEO. Ajuste de altura máxima do player no mobile */
+        max-height: calc(92vh - 150px); /* VIDEO. Mantém player visível junto com título e botões */
+    }
+}
+
+/* ============================================= DEPOIMENTOS - FORMULÁRIO E EXIBIÇÃO ============================================= */
+
+#depoimentos-section {                  /* Seção geral de depoimentos */
+    display: none;                      /* Inicialmete escondida */
+    position: fixed;                    /* Fixa em relação à tela para não empurrar o layout */
+    inset: 0;                           /* Cobre a área visível inteira */
+    background: rgba(0, 0, 0, 0.45);    /* Escurece o fundo atrás da caixa */
+    z-index: 20;                        /* Fica acima do conteúdo da página */
+    padding: 1rem;                      /* Respiro nas bordas da tela */
+    overflow: auto;                     /* Permite rolagem interna se faltar espaço */
+}
+
+#depoimentos-section h2 {               /* Título da seção */
+    color: #ffffff;                     /* Cor clara para contraste no painel roxo */
+    margin-bottom: 1rem;                /* Espaço antes do formulário */
+    text-align: center;                 /* Centraliza título */
+    font-size: 1.8rem;                  /* Tamanho destacado */
+}
+
+#depoimentos-section p {                /* Reseta estilos globais de p dentro do modal */
+    position: static;                   /* Evita posicionamento fixo herdado do p global */
+    top: auto;                          /* Remove deslocamento vertical global */
+    left: auto;                         /* Remove deslocamento horizontal global */
+    color: inherit;                     /* Mantém a cor definida pelo bloco pai */
+    font-size: inherit;                 /* Preserva escala tipográfica local */
+    font-weight: inherit;               /* Preserva peso local */
+    letter-spacing: normal;             /* Evita espaçamento global excessivo */
+    margin: 0;                          /* Remove margem padrão para controle local */
+}
+
+.depoimentos-container {                /* Container principal dos depoimentos */
+    width: min(94vw, 1200px);           /* Largura responsiva com limite máximo */
+    min-height: min(95vh, 900px);       /* Aumenta a caixa em 6vh para baixo */
+    margin: -2vh auto 0;                /* Sobe o painel 2vh e centraliza horizontalmente */
+    padding: 1.4rem;                    /* Espaçamento interno do painel */
+    background-color: #8D6FEA;          /* Fundo roxo do painel */
+    border-radius: 20px;                /* Cantos arredondados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+    display: grid;                      /* Organiza as áreas lado a lado */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* Duas colunas equilibradas */
+    gap: 0.75rem;                       /* Espaço menor entre os painéis */
+    box-sizing: border-box;              /* Inclui padding no cálculo da largura */
+}
+
+.depoimentos-form-area,                 /* Área do formulário */
+.depoimentos-display-area {             /* Área de exibição dos depoimentos */
+    background: rgba(255, 255, 255, 0.95); /* Painéis internos em caixa */
+    border-radius: 16px;                /* Cantos arredondados */
+    padding: 0.9rem 1.1rem 1.1rem;      /* Espaçamento interno */
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12); /* Sombra sutil */
+    min-width: 0;                       /* Evita overflow em grid */
+}
+
+.depoimentos-form-area {                /* Área do formulário */
+    display: flex;                      /* Organiza título e formulário em coluna */
+    flex-direction: column;             /* Empilha título acima do formulário */
+    justify-content: flex-start;        /* Mantém o conteúdo colado ao topo */
+    padding-top: 1vh;                   /* Deixa os campos 1vh abaixo do topo da caixa */
+}
+
+.depoimentos-form-area h2,              /* Título da área do formulário */
+.depoimentos-display-area h2 {          /* Título da área de lista */
+    color: var(--primary);              /* Mantém identidade visual */
+    margin: 0 0 0.2rem;                 /* Remove espaço superior e reduz espaço abaixo */
+    text-align: center;                 /* Centraliza */
+    font-size: 1.35rem;                 /* Tamanho menor para liberar espaço */
+}
+
+.depoimentos-form {                     /* Formulário de depoimentos */
+    background: transparent;            /* Remove fundo duplicado */
+    padding: 0;                         /* Usa o padding do painel pai */
+    border-radius: 0;                   /* Usa o arredondamento do painel pai */
+    box-shadow: none;                   /* Evita sombra duplicada */
+    margin-bottom: 0;                   /* Remove espaço extra */
+    margin-top: -0.1rem;                /* Sobe levemente o formulário para encostar no topo útil */
+}
+
+.form-row {                             /* Linha com dois campos */
+    display: grid;                      /* Layout em grade */
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* Dois campos lado a lado */
+    gap: 0.5rem;                        /* Espaço ainda menor entre os campos */
+}
+
+.depoimentos-display-area {             /* Área de lista */
+    display: flex;                      /* Permite empilhar título e lista */
+    flex-direction: column;             /* Conteúdo vertical */
+    overflow: hidden;                   /* Mantém bordas limpas */
+}
+
+#depoimentos-lista {                    /* Container da lista de depoimentos */
+    display: grid;                      /* Grid layout */
+    grid-template-columns: 1fr;         /* Uma coluna dentro da caixa */
+    gap: 0.8rem;                        /* Espaço entre cards */
+    overflow-y: auto;                   /* Permite rolagem na lista */
+    padding-right: 0.25rem;             /* Evita colisão com a barra de rolagem */
+    flex: 1;                            /* Ocupa o espaço restante */
+}
+
+#depoimentos-form {                     /* Container do formulário */
+    margin-bottom: 0;                   /* Remove espaçamento redundante */
+}
+
+.form-group {                           /* Container de cada campo */
+    margin-bottom: 0.8rem;              /* Espaço reduzido entre campos */
+    display: flex;                      /* Flex para organização */
+    flex-direction: column;              /* Empilha label em cima do input */
+}
+ 
+#depoimentos-form label {               /* Labels dos campos */
+    color: var(--primary);              /* Cor do tema */
+    font-weight: bold;                  /* Destaca label */
+    margin-bottom: 0.25rem;             /* Espaço reduzido do label até input */
+    font-size: 0.92rem;                 /* Fonte menor para compactar o formulário */
+}
+
+#dep-nome,
+#dep-email,
+#dep-estado,
+#dep-cidade,
+#dep-depoimento {                       /* Inputs e textarea */
+    padding: 0.8rem;                    /* Espaçamento interno */
+    border: 2px solid #ddd;             /* Borda cinza clara */
+    border-radius: 4px;                 /* Cantos levemente arredondados */
+    font-size: 0.93rem;                 /* Fonte reduzida para ganhar espaço */
+    font-family: inherit;               /* Herda fonte da página */
+    transition: border-color 0.3s, box-shadow 0.3s;  /* Suaviza mudança de borda */
+    width: 100%;                        /* Ocupa 100% da largura do container */
+    box-sizing: border-box;             /* Inclui padding na largura */
+}
+
+#dep-nome:focus,
+#dep-email:focus,
+#dep-estado:focus,
+#dep-cidade:focus,
+#dep-depoimento:focus {                 /* Estados de foco */
+    outline: none;                      /* Remove outline padrão */
+    border-color: var(--primary);       /* Borda fica colorida ao focar */
+    box-shadow: 0 0 0 3px rgba(141, 111, 234, 0.1);  /* Glow sutil */
+}
+
+#dep-depoimento {                       /* Textarea específico */
+    resize: vertical;                   /* Permite redimensionar verticalmente */
+    min-height: 100px;                  /* Altura mínima reduzida */
+    line-height: 1.5;                   /* Espaçamento entre linhas */
+}
+
+.btn-enviar {                           /* Botão de submit */
+    background-color: var(--primary);   /* Cor do tema */
+    color: white;                       /* Texto branco */
+    padding: 0.9rem 2rem;               /* Espaçamento interno */
+    border: none;                       /* Sem borda padrão */
+    border-radius: 999px;               /* Cantos bem mais arredondados */
+    font-size: 0.93rem;                 /* Fonte menor para caber melhor na caixa */
+    font-weight: bold;                  /* Destaca texto */
+    cursor: pointer;                    /* Cursor muda em hover */
+    transition: all 0.3s ease;          /* Suaviza transições */
+    box-shadow: var(--button-shadow);   /* Sombra do tema */
+    margin-top: 1vh;                    /* Mantém o botão dentro da caixa sem excessos */
+    align-self: flex-start;             /* Mantém o botão preso à coluna esquerda */
+    position: static;                   /* Remove o posicionamento fixo global */
+    top: auto;                          /* Libera a posição vertical herdada */
+    left: auto;                         /* Libera a posição horizontal herdada */
+    width: fit-content;                 /* Ajusta a largura ao conteúdo */
+    height: auto;                       /* Ajusta a altura ao conteúdo */
+    display: inline-flex;               /* Permite centralizar o texto com precisão */
+    align-items: center;                /* Centraliza verticalmente o texto */
+    justify-content: center;            /* Centraliza horizontalmente o texto */
+    line-height: 1;                     /* Evita desalinhamento vertical */
+    text-align: center;                 /* Garante centralização do conteúdo */
+}
+
+.btn-enviar:hover {                     /* Estado de hover */
+    background-color: #7a5dd4;          /* Cor um pouco mais escura */
+    transform: translateY(-2px);        /* Levanta o botão */
+    box-shadow: 0 6px 20px rgba(141, 111, 234, 0.3);  /* Sombra aumentada */
+}
+
+.btn-enviar:active {                    /* Estado pressionado */
+    transform: translateY(0);           /* Volta para posição normal */
+    box-shadow: 0 2px 8px rgba(141, 111, 234, 0.2);  /* Sombra menor */
+}
+
+.depoimento-card {                      /* Card individual do depoimento */
+    background: white;                  /* Fundo branco */
+    padding: 1.5rem;                    /* Espaçamento interno */
+    border-radius: 8px;                 /* Cantos arredondados */
+    border-left: 4px solid var(--primary);  /* Barra colorida na esquerda */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);  /* Sombra sutil */
+    transition: transform 0.3s, box-shadow 0.3s;  /* Suaviza mudanças */
+    position: relative;                 /* Contexto para botão absoluto */
+    font-family: 'Courier New', Courier, monospace; /* Visual textual no estilo de depoimento digitado */
+}
+
+.depoimento-card:hover {                /* Estado de hover */
+    transform: translateY(-4px);        /* Levanta o card */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);  /* Sombra aumentada */
+}
+
+.depoimento-header {                    /* Header do card com nome e botão */
+    display: flex;                      /* Flex layout */
+    justify-content: space-between;     /* Espaço entre nome e botão */
+    align-items: flex-start;            /* Alinha ao topo */
+    margin-bottom: 1rem;                /* Espaço até texto */
+}
+
+.depoimento-header > div {              /* Container do nome/local/data */
+    flex: 1;                            /* Ocupa espaço disponível */
+}
+
+.depoimento-nome {                      /* Nome do depoente */
+    color: #111111;                     /* Cor escura para legibilidade */
+    font-size: 1.2rem;                  /* Tamanho destacado */
+    margin-bottom: 0.5rem;              /* Espaço até próximo elemento */
+    font-weight: 700;                   /* Dá destaque ao nome */
+    line-height: 1.25;                  /* Mantém quebra visual parecida com o modelo */
+}
+
+.depoimento-local {                     /* Cidade e estado */
+    color: #111111;                     /* Texto preto conforme referência */
+    font-size: 0.95rem;                 /* Tamanho levemente menor que o nome */
+    margin-bottom: 0.5rem;              /* Espaço até próximo elemento */
+    line-height: 1.35;                  /* Ajusta espaçamento para leitura em múltiplas linhas */
+}
+
+.depoimento-data {                      /* Data do depoimento */
+    color: #111111;                     /* Texto preto conforme referência */
+    font-size: 0.95rem;                 /* Mantém leitura consistente */
+    margin-bottom: 1rem;                /* Espaço até texto do depoimento */
+    line-height: 1.3;                   /* Ajusta quebra da data em duas linhas */
+}
+
+.depoimento-texto {                     /* Box do texto do depoimento */
+    background: transparent;            /* Remove caixa para visual limpo do texto */
+    padding: 0;                         /* Sem recuo extra para parecer texto corrido */
+    border-radius: 0;                   /* Sem arredondamento */
+    border: none;                       /* Sem borda */
+    line-height: 1.6;                   /* Espaçamento entre linhas */
+    color: #111111;                     /* Texto preto conforme referência */
+    font-size: 0.95rem;                 /* Escala legível e consistente */
+}
+
+.depoimento-texto p {                   /* Parágrafos dentro do box */
+    margin: 0;                          /* Remove margem padrão */
+}
+
+.depoimento-delete-btn {                /* Botão de deletar depoimento */
+    background: #ff6b6b;                /* Fundo vermelho */
+    color: white;                       /* Texto branco */
+    border: none;                       /* Sem borda */
+    border-radius: 50%;                 /* Circular */
+    width: 36px;                        /* Largura quadrada */
+    height: 36px;                       /* Altura quadrada */
+    font-size: 1.5rem;                  /* Tamanho do × */
+    cursor: pointer;                    /* Cursor de clique */
+    display: flex;                      /* Flex para centralizar */
+    align-items: center;                /* Centraliza verticalmente */
+    justify-content: center;             /* Centraliza horizontalmente */
+    transition: all 0.3s;               /* Suaviza transições */
+    flex-shrink: 0;                     /* Não encolhe */
+    margin-left: 1rem;                  /* Espaço do texto */
+}
+
+.depoimento-delete-btn:hover {          /* Estado de hover */
+    background: #ff5252;                /* Vermelho mais escuro */
+    transform: scale(1.1);              /* Aumenta ligeiramente */
+    box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);  /* Sombra sutil */
+}
+
+.depoimento-delete-btn:active {         /* Estado pressionado */
+    transform: scale(0.95);             /* Diminui um pouco */
+}
+
+/* DEPOIMENTOS - Estilos do menu institucional */
+.institutional-menu {                   /* Menu Institucional */
+    position: relative;                 /* Contexto para submenu posicionado */
+}
+
+.institutional-submenu {                /* Submenu de Institucional */
+    display: none;                      /* Escondido por padrão */
+    position: absolute;                 /* Posicionado relativamente ao pai */
+    top: 100%;                          /* Logo abaixo do menu principal */
+    left: 0;                            /* Alinhado com o menu */
+    background: white;                  /* Fundo branco */
+    border: 1px solid #ddd;             /* Borda cinza clara */
+    border-radius: 4px;                 /* Cantos arredondados */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Sombra para profundidade */
+    z-index: 1000;                      /* Fica acima de outros elementos */
+    min-width: 200px;                   /* Largura mínima */
+}
+
+.institutional-menu.open .institutional-submenu {  /* Submenu quando menu está aberto */
+    display: block;                     /* Mostra o submenu */
+}
+
+.institutional-submenu a {              /* Links do submenu */
+    display: block;                     /* Cada link em sua própria linha */
+    padding: 0.8rem 1.2rem;             /* Espaçamento interno */
+    color: var(--primary);              /* Cor do tema */
+    text-decoration: none;              /* Remove sublinhado */
+    transition: background 0.3s;        /* Suaviza mudança de fundo */
+}
+
+.institutional-submenu a:hover {        /* Estado de hover dos links */
+    background: #f5f5f5;                /* Fundo cinza claro */
+    color: #7a5dd4;                     /* Cor mais escura */
+}
+
+/* Seção de vídeos institucionais - Similar ao portfólio */
+.institucional-videos-window {          /* Container dos vídeos institucionais */
+    display: none;                      /* Escondido por padrão */
+    position: fixed;                    /* Fixa em relação à tela */
+    top: 25vh;                          /* Distância exata do topo */
+    bottom: 5vh;                        /* Distância exata da base */
+    left: 4.5vw;                        /* Distância lateral esquerda */
+    right: 4.5vw;                       /* Distância lateral direita */
+    background-color: #8D6FEA;          /* Cor da janela */
+    border-radius: 20px;                /* Cantos arredondados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
+    z-index: 4;                         /* Acima dos demais blocos de conteúdo */
+    padding: 1.2rem 1.5rem;             /* Espaçamento interno */
+    overflow-y: auto;                   /* Permite rolar quando houver muitos vídeos */
+}
+
+.institucional-videos-window h2 {       /* Título dos vídeos */
+    color: #ffffff;                     /* Define título em branco para contraste */
+    font-size: 1.8rem;                  /* Define tamanho de destaque do título */
+    text-align: center;                 /* Centraliza o texto do título */
+    margin-bottom: 1rem;                /* Cria espaço abaixo do título */
+}
+
+#institucional-grid {                   /* Grid dos vídeos institucionais */
+    display: grid;                      /* Grid layout */
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* Distribui 3 colunas responsivas */
+    gap: 1rem;                          /* Define espaçamento entre cartões */
+}
+
+@media (max-width: 1024px) {            /* INST. Breakpoint para tablets */
+    #institucional-grid {               /* INST. Ajusta colunas no tablet */
+        grid-template-columns: repeat(2, minmax(0, 1fr)); /* Reduz para 2 colunas em tablets */
+    }
+}
+
+@media (max-width: 640px) {             /* INST. Breakpoint para celulares */
+    #institucional-grid {               /* INST. Ajusta colunas no celular */
+        grid-template-columns: 1fr;     /* Exibe 1 coluna em telas pequenas */
+    }
+}
+
+/* ============================================= DEPOIMENTOS - RESPONSIVO ============================================= */
+
+@media (max-width: 768px) {
+    #depoimentos-section {              /* Depoimentos em tablets */
+        padding: 0.75rem;               /* Reduz respiro externo */
+    }
+
+    .depoimentos-container {            /* Painel principal em tablets */
+        width: 96vw;                    /* Ocupa mais largura útil */
+        min-height: auto;               /* Deixa a altura crescer com o conteúdo */
+        grid-template-columns: 1fr;     /* Empilha as áreas */
+        margin-top: 1.5vh;              /* Mantém o painel mais baixo, mas compacto */
+    }
+
+    .form-row {                         /* Campos lado a lado em telas menores */
+        grid-template-columns: 1fr;     /* Empilha Estado e Cidade */
+    }
+
+    #depoimentos-lista {                /* Lista em tablets */
+        max-height: 38vh;               /* Evita que a lista domine a tela */
+    }
+
+    .institutional-submenu {            /* Submenu em tablets */
+        position: static;               /* Mantém fluxo normal */
+        border: none;                   /* Remove borda */
+        box-shadow: none;               /* Remove sombra */
+    }
+
+    .institutional-menu.open .institutional-submenu {  /* Submenu aberto */
+        display: block;                 /* Mostra sem posicionamento absoluto */
+    }
+}
