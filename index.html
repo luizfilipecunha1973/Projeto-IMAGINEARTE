@@ -1,0 +1,204 @@
+<!DOCTYPE html> <!-- Declara que este documento é HTML5  -->
+<html lang="pt-BR"> <!--Determina o idioma da pagina-->
+
+<head>  <!--Parte para as configurações do html(parte invisivel)-->
+    <meta charset="UTF-8" /> <!-- Define a codificação de caracteres para UTF-8 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Garante que o Internet Explorer use o modo de renderização mais moderno (Edge) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- Define a área visível da página para dispositivos móveis, garantindo responsividade -->
+    <link rel="stylesheet" href="styles.css"> <!--Vincula o arquivo CSS-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com"> <!--Link´s para importação da fonte -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <!--Link´s para importação da fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap" rel="stylesheet"> <!--Link´s para importação da fonte -->
+
+    <title>IMAGINEARTE CNC</title> <!-- Título que aparece na aba do navegador -->
+</head>
+
+<body> <!-- Contém todo o conteúdo visível da página, como texto, imagens e elementos interativos -->
+
+    <!-- Vídeo de fundo: arquivo localizado na pasta raiz do projeto -->
+    <video class="bg-video" autoplay muted loop playsinline poster="./Logo%20fundo%20HEX%20%23ede8d0.png" aria-hidden="true">
+        <source src="./videos/institucionais/Publicidade.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo em background.
+    </video>
+
+    <div class="conteiner"> <!-- Contém todo o conteúdo principal da página -->
+
+        <section class="conteiner-top">  <!-- Define uma seção temática da página, agrupando conteúdo relacionado -->
+            <img class="logotipo" alt="logo" src="./imagens/logosite.png" > <!--Imagem do logo da empresa-->
+            <h1>Imaginearte CNC</h1> <!--Título Principal da Pagina-->
+            <p> Criações únicas que saem direto da mente para o mundo real. </p> <!--Geralmente utilizado para descrevel algo-->
+        </section>
+
+        <section class="conteiner-menu"> <!-- Define uma seção temática da página, agrupando conteúdo relacionado -->
+            <header>  <!-- Representa o cabeçalho da página ou de uma seção, contendo títulos, logos ou navegação -->
+                <a class="menu home-link" href="index.html">Home</a> <!-- SERV. Link principal Home -->
+                <a class="menu quem-somos-link" href="#quem-somos">Quem Somos</a> <!-- SERV. Link principal Quem Somos -->
+                <div class="menu-item services-menu"> <!-- SERV. Container do submenu de Serviços -->
+                    <a class="menu" href="#">Serviços</a> <!-- SERV. Link principal Serviços -->
+                    <div class="submenu"> <!-- SERV. Caixa com opções de serviços -->
+                        <a href="#" class="artesanato-link">Usinagem Artesanato</a> <!-- SERV. Link de serviço -->
+                        <a href="#" class="comercial-link">Usinagem Comercial</a> <!-- SERV. Link de serviço -->
+                        <a href="#" class="residencial-link">Usinagem Residencial</a> <!-- SERV. Link de serviço -->
+                    </div>
+                </div>
+                <a class="menu portfolio-link">Portfólio</a> <!-- SERV. Link principal Portfólio -->
+                <div class="menu-item institutional-menu"> <!-- INST. Container do submenu de Institucional -->
+                    <a class="menu" href="#">Institucional</a> <!-- INST. Link principal Institucional -->
+                    <div class="submenu institutional-submenu"> <!-- INST. Caixa com opções de Institucional -->
+                        <a href="#" class="institucional-contato-link">Contato</a> <!-- INST. Link de Contato -->
+                        <a href="#" class="institucional-videos-link">Videos</a> <!-- INST. Link de Vídeos -->
+                        <a href="#" class="depoimentos-link">Depoimentos</a> <!-- INST. Link de Depoimentos -->
+                    </div>
+                </div>
+            </header>
+
+        </section>
+
+        <section id="portfolio" class="portfolio-section" style="display: none;"> <!-- PORT. Seção de exibição do portfólio -->
+            <div class="portfolio-box"> <!-- PORT. Caixa contentora do portfólio -->
+                <img src="./imagens/Folder.png" alt="Portfólio" class="portfolio-img" /> <!-- PORT. Imagem principal do portfólio -->
+            </div>
+        </section>
+
+        <section id="quem-somos" class="quem-somos-section" style="display: none;"> <!-- QUEM Define a seção de apresentação da empresa -->
+            <h2>Quem Somos</h2> <!-- QUEM Título da seção -->
+            <p> Empresa brasileira, idealizada através de um sonho pessoal, para dar possibilidade 
+                das pessoas transformarem seus sonhos em realidade. <br>
+                Usinando criações únicas, que saem direto da mente para o mundo real. <br> 
+                Através de vários materiais e formas, deixando assim suas peças e ambientes de acordo 
+                com as suas idealizações. <br>
+                Trabalhando nos mais diversos campos, com o conhecimento e qualidade do passado, para 
+                atender cada vez mais seus clientes no ramo de usinagem, através de máquina Router CNC.
+            </p> <!-- QUEM Descrição da empresa -->
+        </section>
+
+        <section id="usinagem-artesanato" class="usinagem-artesanato-window" style="display: none;"> <!-- ART. Janela da usinagem de artesanato -->
+            <h2>Usinagem Artesanato</h2> <!-- ART. Título da janela -->
+            <div id="artesanato-grid" class="artesanato-grid"></div> <!-- ART. Grade de vídeos e descrições -->
+        </section>
+
+        <section id="usinagem-residencial" class="residencial-window" style="display: none;"> <!-- RES. Janela pequena de aviso do residencial -->
+            <p>Em breve</p> <!-- RES. Texto de aviso temporário -->
+        </section>
+
+        <section id="institucional-videos" class="institucional-videos-window" style="display: none;"> <!-- INST. Janela de vídeos institucionais -->
+            <h2>Videos Institucionais</h2> <!-- INST. Título da janela -->
+            <div id="institucional-grid" class="artesanato-grid"></div> <!-- INST. Grade de vídeos institucionais -->
+        </section>
+
+        <section id="depoimentos-section" class="depoimentos-section" style="display: none;"> <!-- DEP. Seção de depoimentos -->
+            <div class="depoimentos-container">
+                <div class="depoimentos-form-area"> <!-- DEP. Área do formulário -->
+                    <h2>Deixe seu Depoimento</h2> <!-- DEP. Título -->
+                    <form id="depoimentos-form" class="depoimentos-form"> <!-- DEP. Formulário de depoimentos -->
+                        <div class="form-group">
+                            <label for="dep-nome">Nome:</label>
+                            <input type="text" id="dep-nome" name="nome" required minlength="3" maxlength="100" placeholder="Digite seu nome" autocomplete="name"> <!-- DEP. Campo de nome -->
+                        </div>
+                        <div class="form-group">
+                            <label for="dep-email">E-mail:</label>
+                            <input type="email" id="dep-email" name="email" required> <!-- DEP. Campo de e-mail -->
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="dep-estado">Estado:</label>
+                                <select id="dep-estado" name="estado" required> <!-- DEP. Campo de estado (lista fixa) -->
+                                    <option value="">Selecione um estado</option>
+                                    <option value="AC">AC - Acre</option>
+                                    <option value="AL">AL - Alagoas</option>
+                                    <option value="AP">AP - Amapa</option>
+                                    <option value="AM">AM - Amazonas</option>
+                                    <option value="BA">BA - Bahia</option>
+                                    <option value="CE">CE - Ceara</option>
+                                    <option value="DF">DF - Distrito Federal</option>
+                                    <option value="ES">ES - Espirito Santo</option>
+                                    <option value="GO">GO - Goias</option>
+                                    <option value="MA">MA - Maranhao</option>
+                                    <option value="MT">MT - Mato Grosso</option>
+                                    <option value="MS">MS - Mato Grosso do Sul</option>
+                                    <option value="MG">MG - Minas Gerais</option>
+                                    <option value="PA">PA - Para</option>
+                                    <option value="PB">PB - Paraiba</option>
+                                    <option value="PR">PR - Parana</option>
+                                    <option value="PE">PE - Pernambuco</option>
+                                    <option value="PI">PI - Piaui</option>
+                                    <option value="RJ">RJ - Rio de Janeiro</option>
+                                    <option value="RN">RN - Rio Grande do Norte</option>
+                                    <option value="RS">RS - Rio Grande do Sul</option>
+                                    <option value="RO">RO - Rondonia</option>
+                                    <option value="RR">RR - Roraima</option>
+                                    <option value="SC">SC - Santa Catarina</option>
+                                    <option value="SP">SP - Sao Paulo</option>
+                                    <option value="SE">SE - Sergipe</option>
+                                    <option value="TO">TO - Tocantins</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dep-cidade">Cidade:</label>
+                                <input type="text" id="dep-cidade" name="cidade" required minlength="2" maxlength="50"> <!-- DEP. Campo de cidade -->
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dep-depoimento">Depoimento:</label>
+                            <textarea id="dep-depoimento" name="depoimento" rows="5" required minlength="10" maxlength="2000" placeholder="Compartilhe sua experiência..."></textarea> <!-- DEP. Caixa de texto do depoimento -->
+                        </div>
+                        <button type="submit" class="btn-enviar">Enviar</button> <!-- DEP. Botão de envio -->
+                        <br>
+                    </form>
+                </div>
+                <div class="depoimentos-display-area"> <!-- DEP. Área de exibição dos depoimentos -->
+                    <h2>Depoimentos de Clientes</h2> <!-- DEP. Título -->
+                    <div id="depoimentos-lista" class="depoimentos-lista"></div> <!-- DEP. Container dos depoimentos -->
+                </div>
+            </div>
+        </section>
+
+        <section id="contact-modal" class="contact-modal" style="display: none;" aria-hidden="true"> <!-- CONTATO. Overlay da caixa de contatos -->
+            <div class="contact-box" role="dialog" aria-modal="true" aria-labelledby="contact-title"> <!-- CONTATO. Caixa central -->
+                <button class="contact-close" type="button" aria-label="Fechar contatos">x</button> <!-- CONTATO. Botão de fechar -->
+                <h2 id="contact-title">Contatos</h2>
+
+                <div class="contact-group-title">E-mail's:</div>
+                <a href="mailto:contato@imagineartecnc.com.br">contato@imagineartecnc.com.br</a>
+                <a href="mailto:imaginearte.cnc@gmail.com">imaginearte.cnc@gmail.com</a>
+
+                <div class="contact-media-row contact-phone-row">
+                    <div class="contact-media-row">
+                        <img src="./imagens/celular.png" alt="Celular" class="contact-icon" />
+                        <a class="contact-no-underline" href="ms-phone:?PhoneNumber=%2B5535984524364" aria-label="Abrir Vincular ao Celular com o número +55 35 98452-4364">+55 35 98452-4364</a>
+                    </div>
+
+                    <a id="whatsapp-contact-link" class="contact-media-row" href="#" target="_blank" rel="noopener noreferrer">
+                        <img src="./imagens/zap.png" alt="WhatsApp" class="contact-icon" />
+                        <span>+55 35 98452-4364</span>
+                    </a>
+                </div>
+
+                <div class="contact-media-row contact-instagram-row">
+                    <a href="https://www.instagram.com/imaginearte.cnc?utm_source=qr&amp;igsh=bW9sbWE2ZjN3eDF6" target="_blank" rel="noopener noreferrer" aria-label="Abrir Instagram da IMAGINEARTE CNC">
+                        <img src="./imagens/Instagram.png" alt="Instagram" class="contact-icon contact-instagram-icon" />
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="video-modal" class="video-modal" style="display: none;" aria-hidden="true"> <!-- VIDEO. Overlay para ampliar reprodução -->
+            <div class="video-modal-box" role="dialog" aria-modal="true" aria-labelledby="video-modal-title"> <!-- VIDEO. Caixa principal da visualização -->
+                <button class="video-modal-close" type="button" aria-label="Fechar vídeo">x</button> <!-- VIDEO. Botão para fechar janela ampliada -->
+                <h2 id="video-modal-title">Visualização do Vídeo</h2> <!-- VIDEO. Título dinâmico do vídeo selecionado -->
+                <p id="video-modal-counter" class="video-modal-counter" aria-live="polite">1 de 1</p> <!-- VIDEO. Contador de posição na lista atual -->
+                <video id="video-modal-player" controls preload="metadata"></video> <!-- VIDEO. Player ampliado com proporção automática -->
+                <div class="video-modal-actions"> <!-- VIDEO. Barra de navegação entre vídeos -->
+                    <button id="video-modal-prev" class="video-modal-nav" type="button" aria-label="Vídeo anterior">Anterior</button> <!-- VIDEO. Botão para voltar ao vídeo anterior -->
+                    <button id="video-modal-next" class="video-modal-nav" type="button" aria-label="Próximo vídeo">Próximo</button> <!-- VIDEO. Botão para avançar para o próximo vídeo -->
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- Fecha o conteúdo principal da página -->
+
+    <script src="script.js"></script>
+</body>
+
+</html>
