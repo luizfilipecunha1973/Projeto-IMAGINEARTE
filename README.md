@@ -267,4 +267,4 @@ Remove o depoimento informado pelo id.
 
 Projeto institucional da IMAGINEARTE CNC.
 
-Desenvolvimento: Filipe Programador
+Desenvolvimento: Luiz Filipe Gonzalez Cunha
