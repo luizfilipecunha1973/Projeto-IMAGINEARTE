@@ -173,6 +173,24 @@ Aplicacao disponivel em: http://localhost:3000
 	- `ADMIN_TOKEN` para proteger exclusao de depoimentos
 	- `ADMIN_USERNAME` e `ADMIN_PASSWORD` para habilitar login admin via API
 
+### Configuracao para Hostinger (imagineartecnc.com.br)
+
+- Dominio principal: `https://imagineartecnc.com.br`
+- Dominios permitidos para CORS:
+	- `https://imagineartecnc.com.br`
+	- `https://www.imagineartecnc.com.br`
+- Sugestao de variaveis no painel da Hostinger:
+	- `HOST=0.0.0.0`
+	- `PORT` = porta informada pela plataforma
+	- `DATA_PATH=/home/<usuario>/data/depoimentos.json` (ou outro caminho persistente)
+	- `CORS_ORIGINS=https://imagineartecnc.com.br,https://www.imagineartecnc.com.br`
+	- `ADMIN_TOKEN=<token-forte>`
+	- `ADMIN_USERNAME=<usuario-admin>`
+	- `ADMIN_PASSWORD=<senha-forte>`
+
+Se o frontend e a API estiverem no mesmo dominio, mantenha a meta `api-base` vazia em [index.html](index.html).
+Se a API ficar em subdominio (ex.: `https://api.imagineartecnc.com.br`), preencha `api-base` com essa URL.
+
 ### Health check
 
 - Endpoint para monitoramento: `GET /api/health`
@@ -285,7 +303,7 @@ Exemplo de payload:
 
 ### Porta 3000 ocupada
 
-- Altere a constante PORT em [server.js](server.js)
+- Altere a variavel `PORT` no ambiente (.env local ou painel do provedor)
 - Ou finalize o processo que estiver usando a porta
 
 ### Videos nao aparecem
