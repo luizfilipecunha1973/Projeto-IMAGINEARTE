@@ -40,6 +40,8 @@ const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number.parseInt(process.env.PORT || '3000', 10);
 const DATA_PATH = path.resolve(__dirname, process.env.DATA_PATH || 'depoimentos.json');
 const ADMIN_TOKEN = (process.env.ADMIN_TOKEN || '').trim();
+const ADMIN_USERNAME = (process.env.ADMIN_USERNAME || '').trim();
+const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || '').trim();
 
 const rawAllowedOrigins = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || '').trim();
 const ALLOWED_ORIGINS = new Set(
@@ -253,6 +255,10 @@ const isDeleteAuthorized = (req) => {
     return fromHeader === ADMIN_TOKEN || fromBearer === ADMIN_TOKEN;
 };
 
+const isAdminLoginConfigured = () => {
+    return Boolean(ADMIN_TOKEN && ADMIN_USERNAME && ADMIN_PASSWORD);
+};
+
 const contentTypeByExtension = (ext) => {
     if (ext === '.js') return 'text/javascript; charset=utf-8';
     if (ext === '.css') return 'text/css; charset=utf-8';
@@ -304,8 +310,28 @@ const server = http.createServer(async (req, res) => {
                 service: 'imaginearte-api',
                 timestamp: new Date().toISOString(),
                 storage: DATA_PATH,
-                protectedDelete: Boolean(ADMIN_TOKEN)
+                protectedDelete: Boolean(ADMIN_TOKEN),
+                adminLoginEnabled: isAdminLoginConfigured()
             });
+            return;
+        }
+
+        if (pathname === '/api/admin/login' && req.method === 'POST') {
+            if (!isAdminLoginConfigured()) {
+                jsonResponse(res, 503, { error: 'Login admin nao configurado no servidor.' });
+                return;
+            }
+
+            const payload = await parseRequestBody(req);
+            const username = (payload.username || '').toString().trim();
+            const password = (payload.password || '').toString();
+
+            if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+                jsonResponse(res, 401, { error: 'Credenciais invalidas.' });
+                return;
+            }
+
+            jsonResponse(res, 200, { token: ADMIN_TOKEN });
             return;
         }
 
@@ -422,4 +448,5 @@ server.listen(PORT, HOST, () => {
         console.log('CORS aberto para qualquer origem.');
     }
     console.log(`Delete protegido por token: ${ADMIN_TOKEN ? 'sim' : 'nao'}`);
+    console.log(`Login admin habilitado: ${isAdminLoginConfigured() ? 'sim' : 'nao'}`);
 });

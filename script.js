@@ -321,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
 
     const API_BASE = getApiBase();
     const ADMIN_TOKEN_STORAGE_KEY = 'imaginearte_admin_token';
+    const ADMIN_USERNAME_STORAGE_KEY = 'imaginearte_admin_username';
 
     const getAdminTokenHeader = () => {                                            // (DEP.)Monta cabecalho de admin quando token foi salvo no navegador
         const token = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
@@ -342,6 +343,44 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
 
         localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, cleanToken);
         return cleanToken;
+    };
+
+    const loginAdmin = async () => {                                               // (DEP.)Solicita credenciais e tenta obter token via endpoint de login admin
+        const suggestedUser = localStorage.getItem(ADMIN_USERNAME_STORAGE_KEY) || '';
+        const username = prompt('Usuario administrador:', suggestedUser);
+        if (username === null) {
+            return false;
+        }
+
+        const cleanUsername = username.trim();
+        if (!cleanUsername) {
+            return false;
+        }
+
+        const password = prompt('Senha do administrador:');
+        if (password === null) {
+            return false;
+        }
+
+        const response = await fetch(`${API_BASE}/api/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: cleanUsername, password })
+        });
+
+        if (!response.ok) {
+            return false;
+        }
+
+        const data = await response.json().catch(() => ({}));
+        const token = (data.token || '').toString().trim();
+        if (!token) {
+            return false;
+        }
+
+        localStorage.setItem(ADMIN_USERNAME_STORAGE_KEY, cleanUsername);
+        localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token);
+        return true;
     };
 
     const exibirErroDepoimentos = (mensagem) => {                                    // (DEP.)Mostra um aviso amigável quando a API falha
@@ -516,10 +555,20 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             });
 
             if (response.status === 401) {                                          // (DEP.)Quando API exige token admin, pede o token e tenta uma vez novamente
-                const informedToken = askForAdminToken();
-                if (informedToken === null) {
-                    alert('Exclusao cancelada pelo usuario.');
-                    return;
+                const useLoginFlow = confirm('A API exige permissao de administrador. Deseja entrar com usuario e senha?\n\nClique em OK para login ou Cancelar para informar token manual.');
+
+                if (useLoginFlow) {
+                    const logged = await loginAdmin();
+                    if (!logged) {
+                        alert('Nao foi possivel autenticar como administrador.');
+                        return;
+                    }
+                } else {
+                    const informedToken = askForAdminToken();
+                    if (informedToken === null) {
+                        alert('Exclusao cancelada pelo usuario.');
+                        return;
+                    }
                 }
 
                 response = await fetch(`${API_BASE}/api/depoimentos/${id}`, {

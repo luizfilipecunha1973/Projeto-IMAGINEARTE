@@ -171,6 +171,7 @@ Aplicacao disponivel em: http://localhost:3000
 	- `DATA_PATH` (arquivo/volume persistente)
 	- `CORS_ORIGINS` com os dominios permitidos
 	- `ADMIN_TOKEN` para proteger exclusao de depoimentos
+	- `ADMIN_USERNAME` e `ADMIN_PASSWORD` para habilitar login admin via API
 
 ### Health check
 
@@ -198,6 +199,7 @@ npm run dev
 - Endpoints:
 	- GET /api/estados
 	- GET /api/health
+	- POST /api/admin/login
 	- GET /api/depoimentos
 	- POST /api/depoimentos
 	- DELETE /api/depoimentos/:id
@@ -237,6 +239,19 @@ Exemplo de payload:
 Remove o depoimento informado pelo id.
 
 Observacao: quando `ADMIN_TOKEN` estiver configurado no servidor, envie o token em `X-Admin-Token` (ou `Authorization: Bearer`).
+
+### POST /api/admin/login
+
+Retorna um token admin quando `ADMIN_TOKEN`, `ADMIN_USERNAME` e `ADMIN_PASSWORD` estiverem configurados no servidor.
+
+Exemplo de payload:
+
+```json
+{
+	"username": "admin",
+	"password": "sua-senha"
+}
+```
 
 ## Validacoes implementadas
 
