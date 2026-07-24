@@ -306,7 +306,43 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         }).join('');                                                                  // (USI.)Converte o array de cartões em uma string única
     };                                                                                // (USI.)Fim da função renderUsinagemVideos
 
-    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3000' : ''; // (DEP.)Permite API funcionar abrindo index direto no navegador
+    const getApiBase = () => {                                                     // (DEP.)Calcula base da API a partir de configuracao explicita ou contexto atual
+        const byMeta = document.querySelector('meta[name="api-base"]')?.getAttribute('content')?.trim() || ''; // (DEP.)Permite configurar API pelo HTML
+        const byDataAttribute = document.documentElement?.dataset?.apiBase?.trim() || ''; // (DEP.)Permite configurar API pelo atributo data-api-base
+        const byGlobal = typeof window.IMAGINEARTE_API_BASE === 'string' ? window.IMAGINEARTE_API_BASE.trim() : ''; // (DEP.)Permite sobrescrever API por variavel global
+        const configuredBase = byGlobal || byMeta || byDataAttribute;             // (DEP.)Prioriza configuracoes explicitas
+
+        if (configuredBase) {
+            return configuredBase.replace(/\/+$/, '');                           // (DEP.)Remove barra final para evitar URL duplicada
+        }
+
+        return window.location.protocol === 'file:' ? 'http://localhost:3000' : ''; // (DEP.)Fallback para desenvolvimento local
+    };
+
+    const API_BASE = getApiBase();
+    const ADMIN_TOKEN_STORAGE_KEY = 'imaginearte_admin_token';
+
+    const getAdminTokenHeader = () => {                                            // (DEP.)Monta cabecalho de admin quando token foi salvo no navegador
+        const token = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
+        const cleanToken = token ? token.trim() : '';
+        return cleanToken ? { 'X-Admin-Token': cleanToken } : {};
+    };
+
+    const askForAdminToken = () => {                                               // (DEP.)Solicita token somente quando API responder nao autorizada
+        const token = prompt('Informe o token de administrador para excluir depoimentos (deixe vazio para cancelar):');
+        if (token === null) {
+            return null;
+        }
+
+        const cleanToken = token.trim();
+        if (!cleanToken) {
+            localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);
+            return '';
+        }
+
+        localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, cleanToken);
+        return cleanToken;
+    };
 
     const exibirErroDepoimentos = (mensagem) => {                                    // (DEP.)Mostra um aviso amigável quando a API falha
         if (depoimentosLista) {                                                     // (DEP.)Confirma que a área de exibição existe
@@ -360,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             exibirDepoimentos(depoimentos);                                          // (DEP.)Exibe os depoimentos carregados
         } catch (error) {
             console.error('Erro ao carregar depoimentos:', error);                   // (DEP.)Log de erro
-            exibirErroDepoimentos('Nao foi possivel carregar os depoimentos. Verifique se o servidor esta ativo em <strong>http://localhost:3000</strong> e execute <strong>npm start</strong> na pasta do projeto.'); // (DEP.)Mensagem orientativa
+            exibirErroDepoimentos('Nao foi possivel carregar os depoimentos. Verifique se a API esta ativa e acessivel neste ambiente.'); // (DEP.)Mensagem orientativa
         }
     };                                                                              // (DEP.)Fim da função carregarDepoimentos
 
@@ -472,15 +508,34 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         }
 
         try {
-            const response = await fetch(`${API_BASE}/api/depoimentos/${id}`, {      // (DEP.)Faz requisição DELETE
-                method: 'DELETE'                                                    // (DEP.)Método DELETE
+            let response = await fetch(`${API_BASE}/api/depoimentos/${id}`, {       // (DEP.)Faz requisição DELETE
+                method: 'DELETE',                                                   // (DEP.)Método DELETE
+                headers: {
+                    ...getAdminTokenHeader()                                        // (DEP.)Envia token de admin quando configurado no navegador
+                }
             });
+
+            if (response.status === 401) {                                          // (DEP.)Quando API exige token admin, pede o token e tenta uma vez novamente
+                const informedToken = askForAdminToken();
+                if (informedToken === null) {
+                    alert('Exclusao cancelada pelo usuario.');
+                    return;
+                }
+
+                response = await fetch(`${API_BASE}/api/depoimentos/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        ...getAdminTokenHeader()
+                    }
+                });
+            }
 
             if (response.ok) {
                 carregarDepoimentos();                                              // (DEP.)Recarrega lista
                 alert('Depoimento deletado com sucesso!');                          // (DEP.)Mensagem de sucesso
             } else {
-                alert('Erro ao deletar depoimento');                                // (DEP.)Mensagem de erro
+                const errorData = await response.json().catch(() => ({}));
+                alert('Erro ao deletar depoimento: ' + (errorData.error || `HTTP ${response.status}`)); // (DEP.)Mensagem de erro detalhada
             }
         } catch (error) {
             console.error('Erro ao deletar:', error);                               // (DEP.)Log de erro

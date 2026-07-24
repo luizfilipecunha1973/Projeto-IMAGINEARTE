@@ -8,7 +8,7 @@ Site institucional da IMAGINEARTE CNC para apresentacao da marca, servicos de us
 
 ## Sobre o projeto
 
-Este projeto foi construido como uma landing page institucional com foco em identidade visual e navegacao interativa. O site utiliza video de fundo, menu com submenus, secoes modais e uma area de depoimentos conectada a banco SQLite.
+Este projeto foi construido como uma landing page institucional com foco em identidade visual e navegacao interativa. O site utiliza video de fundo, menu com submenus, secoes modais e uma area de depoimentos conectada a API com persistencia em arquivo JSON.
 
 O objetivo principal e apresentar os servicos da empresa, exibir trabalhos em video e facilitar o contato de novos clientes.
 
@@ -82,7 +82,7 @@ Modal com:
 - Formulario com validacoes no front-end
 - Lista de depoimentos carregada via API
 - Exclusao de depoimento por botao
-- Dados persistidos em SQLite
+- Dados persistidos em arquivo JSON
 
 ## Tecnologias
 
@@ -90,7 +90,6 @@ Modal com:
 - CSS3
 - JavaScript (Vanilla)
 - Node.js
-- SQLite
 - Google Fonts (Cinzel)
 
 ## Estrutura atual do projeto
@@ -163,6 +162,26 @@ npm start
 
 Aplicacao disponivel em: http://localhost:3000
 
+## Preparacao para provedor
+
+- O servidor agora usa variaveis de ambiente para rede e seguranca.
+- Recomenda-se configurar no provedor:
+	- `HOST=0.0.0.0`
+	- `PORT` (fornecida pelo provedor em muitos casos)
+	- `DATA_PATH` (arquivo/volume persistente)
+	- `CORS_ORIGINS` com os dominios permitidos
+	- `ADMIN_TOKEN` para proteger exclusao de depoimentos
+
+### Health check
+
+- Endpoint para monitoramento: `GET /api/health`
+- Exemplo: `https://seu-dominio.com/api/health`
+
+### Deploy com frontend separado da API
+
+- No HTML, ajuste a meta `api-base` em [index.html](index.html) para a URL da API.
+- Exemplo: `https://api.seudominio.com`
+
 ### 3. Modo desenvolvimento
 
 ```bash
@@ -174,17 +193,18 @@ npm run dev
 ### server.js
 
 - Servidor HTTP principal do projeto
-- Usa modulo nativo node:sqlite
-- Cria e atualiza schema do banco automaticamente
+- Usa apenas modulos nativos do Node.js
+- Persiste depoimentos no arquivo [depoimentos.json](depoimentos.json)
 - Endpoints:
 	- GET /api/estados
+	- GET /api/health
 	- GET /api/depoimentos
 	- POST /api/depoimentos
 	- DELETE /api/depoimentos/:id
 
 ### server-simple.js
 
-- Versao alternativa baseada em sqlite3
+- Versao alternativa baseada em sqlite3 (legado)
 - Mantem os mesmos endpoints de estados e depoimentos
 - Pode ser usada como fallback local
 
@@ -216,6 +236,8 @@ Exemplo de payload:
 
 Remove o depoimento informado pelo id.
 
+Observacao: quando `ADMIN_TOKEN` estiver configurado no servidor, envie o token em `X-Admin-Token` (ou `Authorization: Bearer`).
+
 ## Validacoes implementadas
 
 ### Front-end
@@ -229,7 +251,7 @@ Remove o depoimento informado pelo id.
 
 - Validacao de estado (sigla ou nome)
 - Validacao de campos obrigatorios
-- Insercao com statements parametrizados
+- Escrita segura em arquivo (temporario + rename)
 - Respostas padronizadas em JSON
 
 ## Responsividade e UX

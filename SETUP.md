@@ -6,7 +6,7 @@ Website da empresa IMAGINEARTE especializada em usinagem CNC, vídeos corporativ
 
 - **Galeria de Vídeos**: Organizada em categorias (Artesanato, Comercial, Institucional)
 - **Sistema de Depoimentos**: Formulário para clientes deixarem avaliações
-- **Banco de Dados**: SQLite para armazenar depoimentos
+- **Persistencia de Depoimentos**: arquivo JSON local
 - **Responsivo**: Funciona em desktop, tablet e mobile
 - **Modal de Vídeo**: Visualização ampliada de vídeos com navegação
 
@@ -27,10 +27,7 @@ cd "g:\Meu Drive\Projetos Filipe Programador\IMAGINEARTE"
 npm install
 ```
 
-Isto irá instalar:
-- `express` - Framework web
-- `cors` - Middleware para requisições cruzadas
-- `sqlite3` - Banco de dados
+Isto ira instalar as dependencias do projeto (principalmente `nodemon` para desenvolvimento).
 
 3. **Estrutura de pastas esperada**
 ```
@@ -40,7 +37,7 @@ IMAGINEARTE/
 ├── styles.css
 ├── server.js
 ├── package.json
-├── depoimentos.db (criado automaticamente)
+├── depoimentos.json (usado para armazenar depoimentos)
 ├── Imagens/
 ├── Vídios/
 │   ├── artesanato/
@@ -96,21 +93,23 @@ Vídios/
 
 **Importante**: O código busca os vídeos em `./videos/` (em minúsculas), então renomeie a pasta de `Vídios` para `videos`.
 
-## 💾 Banco de Dados
+## 💾 Armazenamento de Depoimentos
 
-O banco SQLite é criado automaticamente na primeira execução.
+Os depoimentos sao armazenados no arquivo [depoimentos.json](depoimentos.json), criado automaticamente se nao existir.
 
-### Schema da Tabela `depoimentos`
-```sql
-CREATE TABLE depoimentos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    email TEXT NOT NULL,
-    estado TEXT NOT NULL,
-    cidade TEXT NOT NULL,
-    depoimento TEXT NOT NULL,
-    data DATETIME DEFAULT CURRENT_TIMESTAMP
-)
+Exemplo de estrutura:
+```json
+[
+  {
+    "id": 1,
+    "nome": "Nome do Cliente",
+    "email": "cliente@email.com",
+    "estado": "Minas Gerais",
+    "cidade": "Sao Lourenco",
+    "depoimento": "Excelente atendimento e acabamento.",
+    "data": "2026-07-24T20:30:00.000Z"
+  }
+]
 ```
 
 ## 📡 API Endpoints
@@ -135,13 +134,6 @@ curl -X POST http://localhost:3000/api/depoimentos \
     "cidade": "São Paulo",
     "depoimento": "Excelente serviço!"
   }'
-```
-
-### GET /api/depoimentos/:id
-Retorna um depoimento específico
-
-```bash
-curl http://localhost:3000/api/depoimentos/1
 ```
 
 ### DELETE /api/depoimentos/:id
@@ -175,7 +167,7 @@ const port = 3000; // Mude para outra porta se necessário
 
 ## 🐛 Troubleshooting
 
-### "Cannot find module 'express'"
+### "Cannot find module 'nodemon'"
 Solução: Execute `npm install`
 
 ### "EADDRINUSE: address already in use :::3000"
@@ -206,9 +198,9 @@ kill -9 <PID>
 
 2. O servidor precisa estar rodando para os depoimentos funcionarem.
 
-3. O banco de dados é armazenado no arquivo `depoimentos.db` na raiz do projeto.
+3. Os depoimentos sao armazenados no arquivo `depoimentos.json` na raiz do projeto.
 
-4. Para produção, considere usar um banco de dados mais robusto como PostgreSQL.
+4. Para producao com muitos acessos simultaneos, considere usar um banco como PostgreSQL.
 
 ## 🎯 Como Usar o Sistema de Depoimentos
 
@@ -235,6 +227,7 @@ kill -9 <PID>
 - Clique no botão **"×"** vermelho no canto do card
 - Confirme a exclusão
 - O depoimento será removido da lista e do banco de dados
+ - O depoimento sera removido da lista e do arquivo JSON
 
 ## 🔒 Validações Implementadas
 
@@ -247,7 +240,7 @@ kill -9 <PID>
 **No Backend:**
 - Valida comprimento de campos
 - Valida e-mail com regex
-- Previne injeção SQL (prepared statements)
+- Escrita segura em arquivo (temporario + rename)
 - Status HTTP correto para cada situação
 
 ---
