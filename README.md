@@ -102,9 +102,12 @@ IMAGINEARTE/
 ├── server.js
 ├── server-simple.js
 ├── package.json
+├── .env.example
 ├── depoimentos.json
 ├── README.md
 ├── SETUP.md
+├── iniciar-imaginearte.bat
+├── parar-imaginearte.bat
 ├── imagens/
 │   ├── logosite.png
 │   ├── folder.png
@@ -162,6 +165,11 @@ npm start
 
 Aplicacao disponivel em: http://localhost:3000
 
+### 2.1 Atalho no Windows (1 clique)
+
+- Para iniciar servidor + abrir navegador automaticamente: [iniciar-imaginearte.bat](iniciar-imaginearte.bat)
+- Para encerrar processos na porta 3000: [parar-imaginearte.bat](parar-imaginearte.bat)
+
 ## Preparacao para provedor
 
 - O servidor agora usa variaveis de ambiente para rede e seguranca.
@@ -191,15 +199,59 @@ Aplicacao disponivel em: http://localhost:3000
 Se o frontend e a API estiverem no mesmo dominio, mantenha a meta `api-base` vazia em [index.html](index.html).
 Se a API ficar em subdominio (ex.: `https://api.imagineartecnc.com.br`), preencha `api-base` com essa URL.
 
+### Passo a passo de deploy na Hostinger
+
+1. Publique os arquivos do projeto no ambiente Node.js da Hostinger.
+2. Configure o comando de start como `node server.js`.
+3. No painel da aplicacao, configure as variaveis de ambiente:
+	- `HOST=0.0.0.0`
+	- `PORT` = porta atribuida pela Hostinger
+	- `DATA_PATH=/home/<usuario>/data/depoimentos.json` (ou outro caminho persistente)
+	- `CORS_ORIGINS=https://imagineartecnc.com.br,https://www.imagineartecnc.com.br`
+	- `ADMIN_TOKEN=<token-forte>`
+	- `ADMIN_USERNAME=<usuario-admin>`
+	- `ADMIN_PASSWORD=<senha-forte>`
+4. Reinicie a aplicacao no painel da Hostinger apos salvar as variaveis.
+5. Vincule o dominio `imagineartecnc.com.br` para apontar para a aplicacao Node publicada.
+6. Se o frontend e backend estiverem no mesmo dominio, nao altere `api-base` em [index.html](index.html).
+7. Se backend estiver em subdominio separado, configure `api-base` em [index.html](index.html) com a URL da API.
+
+### Validacao apos deploy (Hostinger)
+
+1. Acesse `https://imagineartecnc.com.br/api/health` e confirme `ok: true`.
+2. Abra `https://imagineartecnc.com.br` e teste envio de depoimento.
+3. Teste exclusao de depoimento com autenticacao admin.
+4. Verifique se o arquivo de dados persiste apos restart da aplicacao.
+
 ### Health check
 
 - Endpoint para monitoramento: `GET /api/health`
 - Exemplo: `https://seu-dominio.com/api/health`
+- O retorno inclui:
+	- `ok`
+	- `service`
+	- `timestamp`
+	- `storage`
+	- `protectedDelete`
+	- `adminLoginEnabled`
 
 ### Deploy com frontend separado da API
 
 - No HTML, ajuste a meta `api-base` em [index.html](index.html) para a URL da API.
 - Exemplo: `https://api.seudominio.com`
+
+## Configuracao por ambiente
+
+Use [.env.example](.env.example) como referencia para o arquivo `.env` local.
+
+Variaveis principais:
+
+- `HOST` (ex.: `0.0.0.0`)
+- `PORT` (ex.: `3000` local ou porta do provedor)
+- `DATA_PATH` (caminho do arquivo JSON)
+- `CORS_ORIGINS` (origens permitidas, separadas por virgula)
+- `ADMIN_TOKEN` (protege DELETE)
+- `ADMIN_USERNAME` e `ADMIN_PASSWORD` (habilitam login admin via API)
 
 ### 3. Modo desenvolvimento
 
@@ -271,6 +323,13 @@ Exemplo de payload:
 }
 ```
 
+## Autenticacao admin no frontend
+
+- Ao tentar excluir um depoimento com API protegida, o frontend oferece dois caminhos:
+	- Login com usuario/senha (chama `POST /api/admin/login`)
+	- Informar token manual
+- O token admin e salvo no navegador para reutilizacao nas exclusoes seguintes.
+
 ## Validacoes implementadas
 
 ### Front-end
@@ -300,11 +359,13 @@ Exemplo de payload:
 
 - Verifique se o servidor esta ativo em http://localhost:3000
 - Execute npm start na raiz do projeto
+- Se abriu o arquivo HTML diretamente (`file://`), prefira abrir por `http://localhost:3000`
 
 ### Porta 3000 ocupada
 
 - Altere a variavel `PORT` no ambiente (.env local ou painel do provedor)
 - Ou finalize o processo que estiver usando a porta
+- No Windows, voce pode usar [parar-imaginearte.bat](parar-imaginearte.bat)
 
 ### Videos nao aparecem
 
