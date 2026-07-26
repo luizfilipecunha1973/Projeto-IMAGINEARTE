@@ -158,6 +158,76 @@ button:active {                         /* BOTAO. Estado active compartilhado */
     z-index: 0;                         /* atrás do conteúdo */
 }
 
+.bg-audio-control {                     /* AUDIO. Controle flutuante do som do vídeo de fundo */
+    position: fixed;                    /* AUDIO. Fixa no canto da tela */
+    right: 1.3rem;                      /* AUDIO. Distância da borda direita */
+    bottom: 1.3rem;                     /* AUDIO. Distância da borda inferior */
+    z-index: 45;                        /* AUDIO. Mantém acima de conteúdo e vídeo */
+    display: flex;                      /* AUDIO. Alinha botão e slider na horizontal */
+    align-items: center;                /* AUDIO. Centraliza os itens verticalmente */
+    gap: 0.6rem;                        /* AUDIO. Espaçamento interno dos itens */
+    padding: 0.65rem 0.85rem;           /* AUDIO. Espaçamento da cápsula */
+    border-radius: 999px;               /* AUDIO. Formato arredondado */
+    background: rgba(0, 0, 0, 0.58);    /* AUDIO. Fundo translúcido para contraste */
+    backdrop-filter: blur(4px);         /* AUDIO. Suaviza fundo por trás */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28); /* AUDIO. Destaca sobre o vídeo */
+}
+
+.bg-audio-toggle {                      /* AUDIO. Botão de alternar som/mudo */
+    position: static;                   /* AUDIO. Evita herdar posicionamento global de button */
+    width: 42px;                        /* AUDIO. Largura compacta */
+    height: 42px;                       /* AUDIO. Altura compacta */
+    min-width: 42px;                    /* AUDIO. Garante área de toque constante */
+    border: none;                       /* AUDIO. Remove borda padrão */
+    border-radius: 999px;               /* AUDIO. Botão circular */
+    line-height: 1;                     /* AUDIO. Ajusta alinhamento do ícone */
+    font-size: 1.1rem;                  /* AUDIO. Tamanho do ícone */
+    color: #ffffff;                     /* AUDIO. Ícone branco para contraste */
+    background: rgba(141, 111, 234, 0.95); /* AUDIO. Mantém identidade visual da marca */
+    cursor: pointer;                    /* AUDIO. Indica interação */
+    box-shadow: none;                   /* AUDIO. Remove sombra herdada */
+    top: auto;                          /* AUDIO. Neutraliza posicionamento global */
+    left: auto;                         /* AUDIO. Neutraliza posicionamento global */
+    margin: 0;                          /* AUDIO. Remove deslocamentos globais */
+}
+
+.bg-audio-toggle:hover {                /* AUDIO. Hover do botão */
+    opacity: 0.9;                       /* AUDIO. Feedback visual suave */
+}
+
+.bg-audio-toggle:active {               /* AUDIO. Clique do botão */
+    opacity: 0.75;                      /* AUDIO. Feedback de clique */
+}
+
+.bg-audio-label {                       /* AUDIO. Label de volume */
+    color: #ffffff;                     /* AUDIO. Contraste sobre fundo escuro */
+    font-size: 0.86rem;                 /* AUDIO. Texto discreto */
+    letter-spacing: 0.2px;              /* AUDIO. Melhor leitura */
+}
+
+.bg-audio-volume {                      /* AUDIO. Slider para volume */
+    width: 120px;                       /* AUDIO. Largura do controle */
+    accent-color: #8D6FEA;              /* AUDIO. Cor do controle no navegador */
+    cursor: pointer;                    /* AUDIO. Indica interação */
+}
+
+@media (max-width: 640px) {             /* AUDIO. Ajustes para celulares */
+    .bg-audio-control {
+        right: 0.8rem;                  /* AUDIO. Aproxima da borda no mobile */
+        bottom: 0.8rem;                 /* AUDIO. Aproxima da base no mobile */
+        padding: 0.5rem 0.65rem;        /* AUDIO. Cápsula mais compacta */
+        gap: 0.45rem;                   /* AUDIO. Menor espaçamento interno */
+    }
+
+    .bg-audio-label {
+        display: none;                  /* AUDIO. Oculta label para economizar espaço */
+    }
+
+    .bg-audio-volume {
+        width: 92px;                    /* AUDIO. Slider mais curto no mobile */
+    }
+}
+
 .quem-somos-section {                   /* QUEM Estilos da seção Quem Somos */
     display: none;                      /* QUEM Inicialmente escondida */
     position: fixed;                    /* QUEM Posiciona a caixa em relação à tela */

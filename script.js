@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () =>  {                              // (HOME)Espera o carregamento completo do HTML antes de executar o script
+    const backgroundVideo = document.querySelector('.bg-video');                    // (AUDIO)Seleciona video de fundo para controle de som
+    const backgroundAudioToggle = document.getElementById('bg-audio-toggle');      // (AUDIO)Seleciona botao de alternancia som/mudo
+    const backgroundAudioVolume = document.getElementById('bg-audio-volume');      // (AUDIO)Seleciona slider de volume
     const homeLink = document.querySelector('.home-link');                         // (HOME)Seleciona o link Home
     const quemSomosLink = document.querySelector('.quem-somos-link');              // (QUEM)Seleciona o link Quem Somos
     const quemSomosSection = document.querySelector('.quem-somos-section');        // (QUEM)Seleciona a seção Quem Somos
@@ -39,6 +42,74 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     let currentVideoList = [];                                                       // (VIDEO)Armazena lista da categoria aberta no momento
     let currentVideoIndex = -1;                                                      // (VIDEO)Guarda índice do vídeo em reprodução no modal
     let videoModalCloseTimer = null;                                                 // (VIDEO)Controla timer da animação de fechamento
+    let lastBackgroundVolume = 0.6;                                                  // (AUDIO)Guarda ultimo volume audivel antes do mudo
+
+    const syncBackgroundAudioUi = () => {                                            // (AUDIO)Atualiza estado visual do botao e slider
+        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume) {
+            return;
+        }
+
+        const isMuted = backgroundVideo.muted || backgroundVideo.volume === 0;       // (AUDIO)Define estado mudo considerando volume zero
+        backgroundAudioToggle.textContent = isMuted ? '🔇' : '🔊';                     // (AUDIO)Altera icone conforme estado atual
+        backgroundAudioToggle.setAttribute('aria-label', isMuted ? 'Ativar audio' : 'Colocar audio no mudo');
+        backgroundAudioToggle.setAttribute('aria-pressed', String(!isMuted));
+        backgroundAudioVolume.value = String(backgroundVideo.volume);                 // (AUDIO)Sincroniza slider com volume real
+    };
+
+    const initializeBackgroundAudio = () => {                                        // (AUDIO)Configura estado inicial de audio do video de fundo
+        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume) {
+            return;
+        }
+
+        const initialVolume = Number.parseFloat(backgroundAudioVolume.value);        // (AUDIO)Le valor inicial do slider
+        const safeInitialVolume = Number.isFinite(initialVolume)
+            ? Math.min(1, Math.max(0, initialVolume))
+            : 0.6;
+
+        backgroundVideo.volume = safeInitialVolume;                                  // (AUDIO)Define volume padrao inicial
+        backgroundVideo.muted = true;                                                // (AUDIO)Mantem mudo ate interacao do usuario
+        syncBackgroundAudioUi();                                                     // (AUDIO)Reflete estado inicial na interface
+
+        backgroundAudioToggle.addEventListener('click', () => {                      // (AUDIO)Alterna entre mudo e audivel
+            if (backgroundVideo.muted || backgroundVideo.volume === 0) {
+                const restoredVolume = lastBackgroundVolume > 0 ? lastBackgroundVolume : 0.6;
+                backgroundVideo.muted = false;
+                backgroundVideo.volume = restoredVolume;
+                backgroundVideo.play().catch(() => {
+                    // (AUDIO)Ignora bloqueios de reproducao automatica do navegador
+                });
+            } else {
+                lastBackgroundVolume = backgroundVideo.volume > 0 ? backgroundVideo.volume : lastBackgroundVolume;
+                backgroundVideo.muted = true;
+            }
+
+            syncBackgroundAudioUi();
+        });
+
+        backgroundAudioVolume.addEventListener('input', () => {                      // (AUDIO)Ajusta volume conforme slider
+            const newVolume = Number.parseFloat(backgroundAudioVolume.value);
+            if (!Number.isFinite(newVolume)) {
+                return;
+            }
+
+            const safeVolume = Math.min(1, Math.max(0, newVolume));
+            backgroundVideo.volume = safeVolume;
+
+            if (safeVolume === 0) {
+                backgroundVideo.muted = true;                                        // (AUDIO)Volume zero equivale a modo mudo
+            } else {
+                lastBackgroundVolume = safeVolume;
+                backgroundVideo.muted = false;
+                backgroundVideo.play().catch(() => {
+                    // (AUDIO)Ignora bloqueios de reproducao automatica do navegador
+                });
+            }
+
+            syncBackgroundAudioUi();
+        });
+
+        backgroundVideo.addEventListener('volumechange', syncBackgroundAudioUi);     // (AUDIO)Sincroniza UI em qualquer mudanca externa
+    };
 
     const hideQuemSomos = () => {                                                   // (QUEM)Função para esconder a seção Quem Somos
         if (quemSomosSection) {                                                      // (QUEM)Confirma se a seção existe antes de ocultar
@@ -248,6 +319,8 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`; // (CONTATO)Cria URL do WhatsApp com mensagem codificada
         whatsappContactLink.setAttribute('href', whatsappUrl);                      // (CONTATO)Aplica o link montado no botão de contato
     }
+
+    initializeBackgroundAudio();                                                     // (AUDIO)Ativa controles do som do video de fundo
 
     const artesanatoVideos = [                                                      // (ART.)Lista dos vídeos da pasta de artesanato
         './videos/artesanato/Sagrada Família.mp4',                                  // (ART.)Vídeo Sagrada Família
