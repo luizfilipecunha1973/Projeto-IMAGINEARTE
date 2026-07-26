@@ -23,6 +23,14 @@
         Seu navegador não suporta vídeo em background.
     </video>
 
+    <div class="bg-audio-control" role="group" aria-label="Controle de audio do video de fundo">
+        <button id="bg-audio-toggle" class="bg-audio-toggle" type="button" aria-label="Ativar audio" aria-pressed="false">
+            🔇
+        </button>
+        <label for="bg-audio-volume" class="bg-audio-label">Volume</label>
+        <input id="bg-audio-volume" class="bg-audio-volume" type="range" min="0" max="1" step="0.05" value="0.6" aria-label="Controle de volume do video de fundo">
+    </div>
+
     <div class="conteiner"> <!-- Contém todo o conteúdo principal da página -->
 
         <section class="conteiner-top">  <!-- Define uma seção temática da página, agrupando conteúdo relacionado -->
