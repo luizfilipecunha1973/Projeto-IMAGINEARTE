@@ -69,6 +69,14 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         return band >= 5;
     };
 
+    const getPreferredBackgroundMedia = () => {                                     // (AUDIO)Escolhe mídia ativa com fallback para vídeo quando player mobile não existir
+        if (isMobileLayout() && backgroundAudioPlayer) {
+            return backgroundAudioPlayer;
+        }
+
+        return backgroundVideo;
+    };
+
     const shouldReturnHomeOnOutsideClick = () => {                                  // (RESP.)Aplica retorno à home somente nas faixas mobile definidas
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -157,8 +165,11 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             return;
         }
 
-        const useMobileAudio = isMobileLayout();
-        const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+        const activeMedia = getPreferredBackgroundMedia();
+        if (!activeMedia) {
+            return;
+        }
+
         const isMuted = activeMedia.muted || activeMedia.volume === 0;               // (AUDIO)Define estado mudo considerando volume zero
         backgroundAudioToggle.textContent = isMuted ? '🔇' : '🔊';                     // (AUDIO)Altera icone conforme estado atual
         backgroundAudioToggle.setAttribute('aria-label', isMuted ? 'Ativar audio' : 'Colocar audio no mudo');
@@ -188,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     };
 
     const initializeBackgroundAudio = () => {                                        // (AUDIO)Configura estado inicial de audio do video de fundo
-        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume || !backgroundAudioPlayer) {
+        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume) {
             return;
         }
 
@@ -199,15 +210,17 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
 
         backgroundVideo.volume = safeInitialVolume;                                  // (AUDIO)Define volume padrao inicial
         backgroundVideo.muted = true;                                                // (AUDIO)Mantem mudo ate interacao do usuario
-        backgroundAudioPlayer.volume = safeInitialVolume;                            // (AUDIO)Define volume do áudio mobile
-        backgroundAudioPlayer.muted = true;                                          // (AUDIO)Mantem o áudio mobile mudo até interação
+        if (backgroundAudioPlayer) {
+            backgroundAudioPlayer.volume = safeInitialVolume;                        // (AUDIO)Define volume do áudio mobile
+            backgroundAudioPlayer.muted = true;                                      // (AUDIO)Mantem o áudio mobile mudo até interação
+        }
         syncBackgroundAudioUi();                                                     // (AUDIO)Reflete estado inicial na interface
 
         const applyBackgroundMediaState = () => {                                    // (AUDIO)Alterna entre vídeo e áudio conforme a responsividade
             const useMobileAudio = isMobileLayout();                                 // (AUDIO)Usa áudio mobile para as faixas solicitadas
             updateBackgroundMediaMode(useMobileAudio);
 
-            if (useMobileAudio) {
+            if (useMobileAudio && backgroundAudioPlayer) {
                 if (typeof backgroundVideo.pause === 'function') {
                     backgroundVideo.pause();
                 }
@@ -217,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
                 backgroundAudioPlayer.muted = backgroundAudioPlayer.volume === 0;
                 tryPlayBackgroundMedia(backgroundAudioPlayer);
             } else {
-                if (typeof backgroundAudioPlayer.pause === 'function') {
+                if (backgroundAudioPlayer && typeof backgroundAudioPlayer.pause === 'function') {
                     backgroundAudioPlayer.pause();
                 }
                 backgroundVideo.style.display = 'block';
@@ -228,8 +241,10 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         };
 
         backgroundAudioToggle.addEventListener('click', () => {                      // (AUDIO)Alterna entre mudo e audivel
-            const useMobileAudio = isMobileLayout();                                 // (AUDIO)Escolhe o media ativo conforme a faixa
-            const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+            const activeMedia = getPreferredBackgroundMedia();                       // (AUDIO)Escolhe o media ativo conforme a faixa
+            if (!activeMedia) {
+                return;
+            }
 
             if (activeMedia.muted || activeMedia.volume === 0) {
                 const restoredVolume = lastBackgroundVolume > 0 ? lastBackgroundVolume : 0.6;
@@ -253,8 +268,11 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             }
 
             const safeVolume = Math.min(1, Math.max(0, newVolume));
-            const useMobileAudio = isMobileLayout();                                 // (AUDIO)Aplica o volume ao media correto
-            const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+            const activeMedia = getPreferredBackgroundMedia();                       // (AUDIO)Aplica o volume ao media correto
+            if (!activeMedia) {
+                return;
+            }
+
             activeMedia.volume = safeVolume;
 
             if (safeVolume === 0) {
@@ -271,7 +289,9 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         });
 
         backgroundVideo.addEventListener('volumechange', syncBackgroundAudioUi);     // (AUDIO)Sincroniza UI em qualquer mudanca externa
-        backgroundAudioPlayer.addEventListener('volumechange', syncBackgroundAudioUi); // (AUDIO)Sincroniza UI do áudio mobile
+        if (backgroundAudioPlayer) {
+            backgroundAudioPlayer.addEventListener('volumechange', syncBackgroundAudioUi); // (AUDIO)Sincroniza UI do áudio mobile
+        }
         ['loadedmetadata', 'canplay', 'canplaythrough'].forEach((eventName) => {
             backgroundVideo.addEventListener(eventName, () => {
                 tryPlayBackgroundMedia(backgroundVideo);
@@ -284,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
                 }
 
                 if (isMobileLayout()) {
-                    tryPlayBackgroundMedia(backgroundAudioPlayer);
+                    tryPlayBackgroundMedia(backgroundAudioPlayer || backgroundVideo);
                 } else {
                     tryPlayBackgroundMedia(backgroundVideo);
                 }
