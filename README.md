@@ -12,6 +12,12 @@ Este projeto foi construido como uma landing page institucional com foco em iden
 
 O objetivo principal e apresentar os servicos da empresa, exibir trabalhos em video e facilitar o contato de novos clientes.
 
+## Atualizações recentes
+
+- Servidor mais robusto com variaveis de ambiente, CORS configuravel, health check em /api/health e protecao para exclusao de depoimentos.
+- Area de depoimentos com persistencia em arquivo JSON, validacoes no backend e suporte a login admin via API.
+- Melhorias de UX e responsividade com controle de audio de fundo no hero, adaptacao para faixas de mobile, fechamento de janelas por clique fora e navegacao por teclado.
+
 ## O que existe no site
 
 ### Home
@@ -19,6 +25,7 @@ O objetivo principal e apresentar os servicos da empresa, exibir trabalhos em vi
 - Hero com logo oficial em [imagens/logosite.png](imagens/logosite.png)
 - Titulo e slogan da empresa
 - Video de fundo carregado de [videos/institucionais/Publicidade.mp4](videos/institucionais/Publicidade.mp4)
+- Controle de audio de fundo com botao de mudo/volume no hero
 
 ### Menu principal
 
@@ -352,6 +359,7 @@ Exemplo de payload:
 - Modais com fechamento por clique fora da caixa e tecla Esc
 - Navegacao do modal de video com teclado
 - Ajuste dinamico de tamanho no player ampliado
+- Controle de audio de fundo e alternancia entre video e audio conforme a faixa responsiva
 
 ## Problemas comuns
 
