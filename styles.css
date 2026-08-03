@@ -15,12 +15,15 @@
 body {                                  /* Estilos globais aplicados ao corpo da página */
     font-family: 'Cinzel', sans-serif;  /* fonte utilizada pelo sistema */
     color: var(--primary);              /* cor padrão do texto */
+    min-height: 100vh;                  /* garante altura mínima para o fundo */
+    background-color: var(--bg-top);    /* cor de fallback para o fundo */
 }
 
 .conteiner{                             /* Classe .conteiner*/
     height: 100vh;                      /* altura da tela. 100vh é o total do tamanho da tela */
     width: 100%;                        /* largura: evitar overflow causado por 100vw */
     position: relative;                 /* manter conteúdo acima do vídeo de fundo */
+    z-index: 1;                         /* garante que o conteúdo fique acima do vídeo */
 }
 
 .conteiner-top{                         /* Classe .conteiner-top*/
@@ -94,7 +97,7 @@ header {                                /* Configurações para o header*/
 .submenu {                              /* SERV. Caixa do submenu */
     display: none;                      /* SERV. Mantém o submenu oculto por padrão */
     position: absolute;                 /* SERV. Posiciona o submenu em relação ao item pai */
-    top: calc(100% + 10px);             /* SERV. Coloca o submenu logo abaixo do menu principal */
+    top: calc(100% + 10px);             /* SERV. Mantém o submenu abaixo do item principal */
     left: 0;                            /* SERV. Alinha o submenu à esquerda do item pai */
     background: rgba(255, 255, 255, 0.95); /* SERV. Define o fundo levemente translúcido */
     padding: 10px 15px;                 /* SERV. Adiciona espaço interno ao submenu */
@@ -155,6 +158,7 @@ button:active {                         /* BOTAO. Estado active compartilhado */
     height: 85vh;                       /* altura relativa à janela (85% da altura) */
     object-fit: cover;                  /* cobre toda a área mantendo proporção */
     pointer-events: none;               /* permite clicar nos elementos sobre o vídeo */
+    display: block;                     /* garante que o vídeo fique visível */
     z-index: 0;                         /* atrás do conteúdo */
 }
 
@@ -211,20 +215,335 @@ button:active {                         /* BOTAO. Estado active compartilhado */
     cursor: pointer;                    /* AUDIO. Indica interação */
 }
 
-@media (max-width: 640px) {             /* AUDIO. Ajustes para celulares */
-    .bg-audio-control {
-        right: 0.8rem;                  /* AUDIO. Aproxima da borda no mobile */
-        bottom: 0.8rem;                 /* AUDIO. Aproxima da base no mobile */
-        padding: 0.5rem 0.65rem;        /* AUDIO. Cápsula mais compacta */
-        gap: 0.45rem;                   /* AUDIO. Menor espaçamento interno */
+.bg-audio-control.bg-audio-control-inline { /* AUDIO. Variante posicionada no fluxo do menu em mobile */
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    transform: none;
+    margin: 0.7rem auto 0;
+    width: fit-content;
+    max-width: 94vw;
+    z-index: 8;
+}
+
+body.mobile-background-layout {
+    background-image: url('./imagens/smartfone.png');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: #ede8d0;
+    background-blend-mode: normal;
+    opacity: 1;
+}
+
+body.mobile-background-layout .bg-video,
+body.video-background-layout .bg-video {
+    display: block;
+}
+
+@media (max-width: 1366px) {
+    .conteiner-menu {
+        left: 3vw;
+        top: 11vh;
     }
 
+    header {
+        gap: 3vw;
+        padding: 3vh 1vw;
+    }
+
+    .menu {
+        font-size: 1.2rem;
+    }
+
+    .quem-somos-section {
+        width: min(92vw, 860px);
+        padding: 2.2rem 2rem;
+    }
+
+    .portfolio-img {
+        max-width: 78vw;
+        max-height: 70vh;
+    }
+}
+
+@media (max-width: 1024px) {
+    .conteiner-top {
+        height: auto;
+        position: relative;
+        padding: 1.2rem 1rem 0.4rem;
+    }
+
+    .portfolio-box {
+        width: min(92vw, 640px);
+    }
+
+    .logotipo {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: 0 auto 0.8rem;
+        width: 96px;
+    }
+
+    h1 {
+        position: static;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        font-size: clamp(1.8rem, 4.4vw, 2.7rem);
+    }
+
+    p {
+        position: static;
+        display: block;
+        margin: 0.4rem auto 0;
+        text-align: center;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: 0 auto;
+        padding: 0 1rem 1rem;
+    }
+
+    header {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.8rem 1.2rem;
+        padding: 0.8rem 0 0;
+    }
+
+    .menu {
+        font-size: 1.05rem;
+    }
+
+    .quem-somos-section {
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: min(92vw, 780px);
+        max-height: 78vh;
+        overflow-y: auto;
+        padding: 1.8rem 1.2rem;
+    }
+
+    .portfolio-section {
+        top: 20vh;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .artesanato-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .usinagem-artesanato-window {
+        top: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    body.mobile-background-layout {
+        background-position: center top;
+        background-size: cover;
+    }
+
+    .portfolio-box {
+        width: min(92vw, 360px);
+        padding: 0;
+        background-color: rgba(255, 255, 255, 0.94);
+    }
+
+    .portfolio-desktop {
+        display: none;
+    }
+
+    .portfolio-mobile {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+    }
+
+    .bg-video {
+        top: 0;
+        height: 100vh;
+    }
+
+    .bg-audio-control {
+        right: 0.7rem;
+        bottom: 0.7rem;
+    }
+
+    .menu {
+        font-size: 0.95rem;
+    }
+
+    .submenu {
+        top: auto;
+        bottom: calc(100% + 10px);
+        min-width: 190px;
+    }
+
+    .quem-somos-section {
+        width: min(94vw, 720px);
+        padding: 1.5rem 1rem;
+    }
+
+    .portfolio-section {
+        position: relative;
+        inset: auto;
+        width: auto;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .portfolio-box {
+        width: min(94vw, 360px);
+        max-width: 94vw;
+        padding: 0.8rem;
+    }
+
+    .portfolio-img {
+        max-width: 100%;
+        max-height: min(64vh, 480px);
+    }
+
+    .artesanato-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-box {
+        width: 94vw;
+        padding: 1.2rem 1rem 1.3rem;
+    }
+
+    .video-modal-box {
+        max-width: 94vw;
+        padding: 0.9rem 0.9rem 1rem;
+    }
+}
+
+@media (max-width: 640px) {
     .bg-audio-label {
-        display: none;                  /* AUDIO. Oculta label para economizar espaço */
+        display: none;
     }
 
     .bg-audio-volume {
-        width: 92px;                    /* AUDIO. Slider mais curto no mobile */
+        width: 92px;
+    }
+
+    .menu {
+        font-size: 0.9rem;
+    }
+
+    header {
+        justify-content: center;
+        gap: 0.6rem 0.8rem;
+    }
+
+    .submenu {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .quem-somos-section {
+        width: min(96vw, 680px);
+        padding: 1.25rem 0.95rem;
+    }
+
+    .residencial-window {
+        min-width: 240px;
+        max-width: 88vw;
+        padding: 1rem 1.2rem;
+    }
+
+    .contact-phone-row {
+        gap: 3vw;
+    }
+}
+
+@media (max-width: 480px) {
+    .bg-audio-control {
+        right: 0.5rem;
+        bottom: 0.5rem;
+        padding: 0.45rem 0.55rem;
+        gap: 0.35rem;
+    }
+
+    .bg-audio-volume {
+        width: 78px;
+    }
+
+    .logotipo {
+        width: 80px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    p {
+        font-size: 0.95rem;
+    }
+
+    .menu {
+        font-size: 0.82rem;
+    }
+
+    .submenu a {
+        font-size: 0.92rem;
+    }
+
+    .quem-somos-section {
+        padding: 1rem 0.85rem;
+    }
+
+    .contact-box h2 {
+        font-size: 1.4rem;
+    }
+
+    .video-modal-nav {
+        min-width: 96px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .bg-audio-control {
+        padding: 0.4rem 0.5rem;
+    }
+
+    .bg-audio-volume {
+        width: 70px;
+    }
+
+    .menu {
+        font-size: 0.76rem;
+    }
+
+    .submenu {
+        min-width: 170px;
+    }
+
+    .quem-somos-section {
+        width: 98vw;
+        padding: 0.9rem 0.75rem;
+    }
+
+    .video-modal-nav {
+        min-width: 84px;
+        font-size: 0.78rem;
     }
 }
 
@@ -261,6 +580,9 @@ button:active {                         /* BOTAO. Estado active compartilhado */
     font-size: 1.1rem;                  /* QUEM Tamanho do texto */
     color: #ffffff;                     /* QUEM Define a cor do texto em branco para contraste com o fundo roxo */
     letter-spacing: 0.3px;              /* QUEM Espaçamento entre letras */
+    overflow-wrap: anywhere;            /* QUEM Garante quebra responsiva das palavras longas */
+    word-break: break-word;             /* QUEM Mantém a leitura correta em telas estreitas */
+    hyphens: auto;                      /* QUEM Ajusta a hifenização para telas menores */
 }
 
 .portfolio-section {                   /* PORT. Seção do portfólio */
@@ -278,20 +600,34 @@ button:active {                         /* BOTAO. Estado active compartilhado */
 
 .portfolio-box {                        /* PORT. Caixa contentora do portfólio */
     background-color: rgba(141,111,234, 0.95); /* PORT. Fundo da caixa no padrão do sistema */
-    padding: 2vh 1vw;                   /* PORT. Espaço interno superior/inferior 2vh e lateral 2vw */
+    padding: 0;                         /* PORT. Remove padding para a imagem ocupar todo o espaço */
     border-radius: 20px;                /* PORT. Cantos arredondados no padrão do sistema */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* PORT. Sombra da caixa no padrão do sistema */
     display: flex;                      /* PORT. Transforma em container flex para alinhar o conteúdo */
     justify-content: center;            /* PORT. Centraliza horizontalmente o conteúdo */
     align-items: center;                /* PORT. Centraliza verticalmente o conteúdo */
+    width: min(88vw, 760px);            /* PORT. Limita a largura da caixa */
+    max-width: 100%;                    /* PORT. Evita estourar a tela */
+    box-sizing: border-box;            /* PORT. Inclui padding na largura */
+    overflow: hidden;                  /* PORT. Esconde excesso da imagem */
 }
 
 .portfolio-img {                        /* PORT. Estilo da imagem do portfólio */
-    max-width: 72vw;                    /* PORT. 80vw reduzido em 10% */
-    max-height: 72vh;                   /* PORT. 80vh reduzido em 10% */
+    width: 100%;                        /* PORT. A imagem ocupa toda a largura da caixa */
+    height: auto;                       /* PORT. Mantém altura automática */
+    max-width: 100%;                    /* PORT. Limita ao tamanho da caixa */
+    max-height: min(68vh, 560px);       /* PORT. Limita a altura para não estourar */
     object-fit: contain;                /* PORT. Mantém proporção da imagem */
     display: block;                     /* PORT. Remove espaço extra abaixo da imagem */
     border-radius: 10px;                /* PORT. Arredonda os cantos da imagem acompanhando a moldura */
+}
+
+.portfolio-desktop {
+    display: block;
+}
+
+.portfolio-mobile {
+    display: none;
 }
 
 .usinagem-artesanato-window {           /* ART. Janela da usinagem de artesanato */
@@ -1083,5 +1419,1116 @@ button:active {                         /* BOTAO. Estado active compartilhado */
 
     .institutional-menu.open .institutional-submenu {  /* Submenu aberto */
         display: block;                 /* Mostra sem posicionamento absoluto */
+    }
+}
+
+/* ============================================= RESPONSIVIDADE POR FAIXAS SOLICITADAS ============================================= */
+
+/* Ajuste do submenu Institucional abaixo do item principal em telas amplas */
+@media (min-width: 768px) {
+    .institutional-menu .institutional-submenu {
+        top: calc(100% + 10px);
+        bottom: auto;
+    }
+}
+
+/* 1) Desktop grande: largura >= 1440 e altura >= 800 */
+@media (min-width: 1440px) and (min-height: 800px) {
+    .logotipo {
+        width: 8.2%;
+        top: 1.2vh;
+    }
+
+    h1 {
+        top: -1.8vh;
+        left: 11.4vw;
+        font-size: clamp(3rem, 4.6vw, 5.4rem);
+    }
+
+    p {
+        top: 10.6vh;
+        left: 11.5vw;
+        font-size: 1.55rem;
+    }
+
+    .conteiner-menu {
+        top: 12.8vh;
+        left: 9vw;
+    }
+
+    header {
+        gap: 5.2vw;
+    }
+
+    .menu {
+        font-size: 1.6rem;
+    }
+
+    .quem-somos-section {
+        width: min(78vw, 1050px);
+        top: 57%;
+        max-height: 66vh;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section p {
+        font-size: 1.22rem;
+    }
+
+    .portfolio-img {
+        max-width: 74vw;
+        max-height: 68vh;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 2) Desktop padrão: largura 1280-1439 e altura 760-799 */
+@media (min-width: 1280px) and (max-width: 1439px) and (min-height: 760px) and (max-height: 799px) {
+    .logotipo {
+        width: 9%;
+        top: 1.3vh;
+    }
+
+    h1 {
+        top: -2vh;
+        left: 11.8vw;
+        font-size: clamp(2.7rem, 4.5vw, 4.9rem);
+    }
+
+    p {
+        top: 10.8vh;
+        left: 11.8vw;
+        font-size: 1.35rem;
+    }
+
+    .conteiner-menu {
+        top: 13.1vh;
+        left: 8.5vw;
+    }
+
+    header {
+        gap: 4.2vw;
+    }
+
+    .menu {
+        font-size: 1.45rem;
+    }
+
+    .quem-somos-section {
+        width: min(82vw, 980px);
+        top: 58%;
+        max-height: 64vh;
+        padding: 2.2rem 2rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section p {
+        font-size: 1.1rem;
+    }
+
+    .portfolio-img {
+        max-width: 78vw;
+        max-height: 66vh;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 3) Notebook/tablet horizontal: largura 1024-1279 e altura 700-759 */
+@media (min-width: 1024px) and (max-width: 1279px) and (min-height: 700px) and (max-height: 759px) {
+    .conteiner-top {
+        height: 24vh;
+    }
+
+    .logotipo {
+        width: 10%;
+        top: 1.6vh;
+    }
+
+    h1 {
+        top: -1vh;
+        left: 13vw;
+        font-size: clamp(2.2rem, 4.1vw, 3.7rem);
+    }
+
+    p {
+        top: 11.1vh;
+        left: 13vw;
+        font-size: 1.05rem;
+    }
+
+    .conteiner-menu {
+        top: 14.2vh;
+        left: 6.3vw;
+    }
+
+    header {
+        gap: 3vw;
+        padding: 4.2vh 1vw;
+    }
+
+    .menu {
+        font-size: 1.2rem;
+    }
+
+    .submenu a {
+        font-size: 1rem;
+    }
+
+    .quem-somos-section {
+        width: min(88vw, 920px);
+        top: 59%;
+        max-height: 62vh;
+        padding: 2rem 1.7rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        font-size: 1.75rem;
+        margin-top: 0;
+    }
+
+    .quem-somos-section p {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .portfolio-section {
+        top: 24vh;
+        height: 76vh;
+    }
+
+    .portfolio-img {
+        max-width: 82vw;
+        max-height: 63vh;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 4) Tablet: largura 768-1023 e altura 650-699 */
+@media (min-width: 768px) and (max-width: 1023px) and (min-height: 650px) and (max-height: 699px) {
+    .conteiner-top {
+        position: relative;
+        height: auto;
+        min-height: 34vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2.3rem 1.2rem 1rem;
+    }
+
+    .logotipo {
+        position: static;
+        width: clamp(120px, 20vw, 170px);
+        margin: 0 0 0.55rem;
+    }
+
+    h1 {
+        position: static;
+        left: auto;
+        top: auto;
+        font-size: clamp(2.4rem, 6vw, 3.4rem);
+        text-align: center;
+        margin: 0;
+    }
+
+    p {
+        position: static;
+        left: auto;
+        top: auto;
+        text-align: center;
+        margin: 0.35rem 0 0;
+        font-size: 1.02rem;
+        max-width: 90%;
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 0.85rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1.25rem;
+        padding: 0.3rem 1rem 0;
+    }
+
+    .menu {
+        font-size: clamp(1.55rem, 4vw, 2.2rem);
+    }
+
+    .menu-item {
+        width: min(92vw, 430px);
+        text-align: center;
+    }
+
+    .services-menu > .submenu,
+    .institutional-menu > .submenu,
+    .institutional-menu > .institutional-submenu {
+        position: static;
+        bottom: auto;
+        top: auto;
+        margin-top: 0.65rem;
+        border-radius: 14px;
+        width: 100%;
+        min-width: 0;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .submenu a,
+    .institutional-submenu a {
+        white-space: normal;
+        font-size: 1.03rem;
+        padding: 0.7rem 0.45rem;
+    }
+
+    .portfolio-section {
+        top: 42vh;
+        height: 56vh;
+    }
+
+    .portfolio-img {
+        max-width: 89vw;
+        max-height: 47vh;
+    }
+
+    .quem-somos-section {
+        width: min(92vw, 760px);
+        top: 57%;
+        max-height: 62vh;
+        padding: 1.5rem 1.2rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        margin-top: 0;
+        font-size: 1.5rem;
+    }
+
+    .quem-somos-section p {
+        font-size: 0.98rem;
+        line-height: 1.55;
+    }
+
+    .usinagem-artesanato-window,
+    .institucional-videos-window {
+        top: 42vh;
+        bottom: 3vh;
+        left: 3.8vw;
+        right: 3.8vw;
+        padding: 1rem;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 5) Mobile grande: largura 640-767 e altura >= 700 */
+@media (min-width: 640px) and (max-width: 767px) and (min-height: 700px) {
+    body {
+        background-image: url('./imagens/smartfone.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #ede8d0;
+    }
+
+    .bg-video {
+        display: none;
+    }
+
+    .conteiner-top {
+        position: relative;
+        height: auto;
+        min-height: 34vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1.2rem 0.8rem;
+        background: rgba(22, 14, 54, 0.45);
+    }
+
+    .logotipo {
+        position: static;
+        width: clamp(150px, 34vw, 220px);
+        margin: 0 0 0.7rem;
+    }
+
+    h1 {
+        position: static;
+        left: auto;
+        top: auto;
+        font-size: clamp(2.5rem, 9vw, 4rem);
+        text-align: center;
+        color: #f4ecd6;
+        letter-spacing: 1.6px;
+    }
+
+    p {
+        position: static;
+        left: auto;
+        top: auto;
+        margin-top: 0.35rem;
+        font-size: 0.95rem;
+        text-align: center;
+        color: #e3d7ff;
+        max-width: 92%;
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 1.2rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 1.45rem;
+        padding: 0;
+    }
+
+    .menu {
+        font-size: clamp(2rem, 9vw, 3rem);
+        color: #f4ecd6;
+        text-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+    }
+
+    .menu-item {
+        width: min(92vw, 450px);
+        text-align: center;
+    }
+
+    .services-menu > .submenu,
+    .institutional-menu > .submenu,
+    .institutional-menu > .institutional-submenu {
+        position: static;
+        bottom: auto;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        min-width: 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.7rem;
+        border-radius: 14px;
+        text-align: center;
+        background: rgba(255, 241, 217, 0.94);
+    }
+
+    .submenu a,
+    .institutional-submenu a {
+        color: #2a204f;
+        font-size: 1rem;
+        padding: 0.72rem 0.3rem;
+        white-space: normal;
+    }
+
+    .quem-somos-section {
+        width: 92vw;
+        top: 56%;
+        max-height: 62vh;
+        padding: 1.4rem 1.1rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        margin-top: 0;
+        font-size: 1.55rem;
+    }
+
+    .quem-somos-section p {
+        color: #ffffff;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .portfolio-section {
+        top: 40vh;
+        height: 58vh;
+    }
+
+    .portfolio-box {
+        padding: 1rem 0.7rem;
+    }
+
+    .portfolio-img {
+        max-width: 90vw;
+        max-height: 46vh;
+    }
+
+    .usinagem-artesanato-window,
+    .institucional-videos-window {
+        top: 39vh;
+        bottom: 2vh;
+        left: 2.5vw;
+        right: 2.5vw;
+        padding: 0.9rem;
+        border-radius: 16px;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bg-audio-control {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 1rem;
+        background: rgba(255, 241, 217, 0.96);
+    }
+
+    .bg-audio-label {
+        display: block;
+        color: #2f2559;
+        font-weight: 700;
+    }
+}
+
+/* 6) Mobile médio: largura 480-639 e altura >= 650 */
+@media (min-width: 480px) and (max-width: 639px) and (min-height: 650px) {
+    body {
+        background-image: url('./imagens/smartfone.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #ede8d0;
+    }
+
+    .bg-video {
+        display: none;
+    }
+
+    .conteiner-top {
+        position: relative;
+        height: auto;
+        min-height: 34vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.7rem 1rem 0.7rem;
+        background: rgba(22, 14, 54, 0.42);
+    }
+
+    .logotipo {
+        position: static;
+        width: clamp(130px, 38vw, 180px);
+        margin: 0 0 0.6rem;
+    }
+
+    h1 {
+        position: static;
+        left: auto;
+        top: auto;
+        font-size: clamp(2.2rem, 10vw, 3.3rem);
+        color: #f4ecd6;
+        text-align: center;
+    }
+
+    p {
+        position: static;
+        left: auto;
+        top: auto;
+        margin-top: 0.25rem;
+        font-size: 0.88rem;
+        color: #e3d7ff;
+        text-align: center;
+        max-width: 94%;
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 0.9rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 0;
+    }
+
+    .menu {
+        font-size: clamp(1.75rem, 10vw, 2.7rem);
+        color: #f4ecd6;
+    }
+
+    .menu-item {
+        width: min(93vw, 410px);
+        text-align: center;
+    }
+
+    .services-menu > .submenu,
+    .institutional-menu > .submenu,
+    .institutional-menu > .institutional-submenu {
+        position: static;
+        bottom: auto;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        min-width: 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.6rem;
+        border-radius: 14px;
+        text-align: center;
+        background: rgba(255, 241, 217, 0.95);
+    }
+
+    .submenu a,
+    .institutional-submenu a {
+        color: #2a204f;
+        font-size: 0.97rem;
+        padding: 0.7rem 0.3rem;
+        white-space: normal;
+    }
+
+    .quem-somos-section {
+        width: 94vw;
+        top: 56%;
+        max-height: 63vh;
+        padding: 1.25rem 1rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        margin-top: 0;
+        font-size: 1.45rem;
+    }
+
+    .quem-somos-section p {
+        font-size: 0.9rem;
+        line-height: 1.45;
+    }
+
+    .portfolio-section {
+        top: 38vh;
+        height: 60vh;
+    }
+
+    .portfolio-img {
+        max-width: 92vw;
+        max-height: 47vh;
+    }
+
+    .usinagem-artesanato-window,
+    .institucional-videos-window {
+        top: 38vh;
+        bottom: 2vh;
+        left: 2vw;
+        right: 2vw;
+        padding: 0.85rem;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bg-audio-control {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 0.9rem;
+        background: rgba(255, 241, 217, 0.96);
+    }
+
+    .bg-audio-label {
+        display: block;
+        color: #2f2559;
+        font-weight: 700;
+    }
+}
+
+/* 7) Mobile pequeno: largura 360-479 e altura >= 620 */
+@media (min-width: 360px) and (max-width: 479px) and (min-height: 620px) {
+    body {
+        background-image: url('./imagens/smartfone.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #ede8d0;
+    }
+
+    .bg-video {
+        display: none;
+    }
+
+    .conteiner-top {
+        position: relative;
+        height: auto;
+        min-height: 32vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.45rem 0.8rem 0.6rem;
+        background: rgba(22, 14, 54, 0.4);
+    }
+
+    .logotipo {
+        position: static;
+        width: clamp(110px, 34vw, 145px);
+        margin: 0 0 0.5rem;
+    }
+
+    h1 {
+        position: static;
+        left: auto;
+        top: auto;
+        font-size: clamp(1.95rem, 11vw, 2.8rem);
+        text-align: center;
+        color: #f4ecd6;
+    }
+
+    p {
+        position: static;
+        left: auto;
+        top: auto;
+        margin-top: 0.2rem;
+        font-size: 0.82rem;
+        text-align: center;
+        color: #e3d7ff;
+        max-width: 95%;
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 0.75rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.05rem;
+        padding: 0;
+    }
+
+    .menu {
+        font-size: clamp(1.52rem, 11vw, 2.4rem);
+        color: #f4ecd6;
+    }
+
+    .menu-item {
+        width: min(94vw, 340px);
+        text-align: center;
+    }
+
+    .services-menu > .submenu,
+    .institutional-menu > .submenu,
+    .institutional-menu > .institutional-submenu {
+        position: static;
+        bottom: auto;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        min-width: 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.5rem;
+        border-radius: 12px;
+        text-align: center;
+        background: rgba(255, 241, 217, 0.95);
+    }
+
+    .submenu a,
+    .institutional-submenu a {
+        color: #2a204f;
+        font-size: 0.92rem;
+        padding: 0.62rem 0.3rem;
+        white-space: normal;
+    }
+
+    .quem-somos-section {
+        width: 95vw;
+        top: 55.5%;
+        max-height: 64vh;
+        padding: 1rem 0.8rem;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        margin-top: 0;
+        font-size: 1.3rem;
+    }
+
+    .quem-somos-section p {
+        font-size: 0.84rem;
+        line-height: 1.4;
+    }
+
+    .portfolio-section {
+        top: 36vh;
+        height: 62vh;
+    }
+
+    .portfolio-box {
+        border-radius: 14px;
+        padding: 0.7rem 0.55rem;
+    }
+
+    .portfolio-img {
+        max-width: 93vw;
+        max-height: 48vh;
+        border-radius: 8px;
+    }
+
+    .usinagem-artesanato-window,
+    .institucional-videos-window {
+        top: 36vh;
+        bottom: 1.8vh;
+        left: 1.8vw;
+        right: 1.8vw;
+        padding: 0.75rem;
+        border-radius: 14px;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bg-audio-control {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 0.75rem;
+        max-width: 95vw;
+        padding: 0.45rem 0.55rem;
+        background: rgba(255, 241, 217, 0.95);
+    }
+
+    .bg-audio-label {
+        display: block;
+        color: #2f2559;
+        font-weight: 700;
+        font-size: 0.78rem;
+    }
+
+    .bg-audio-volume {
+        width: 82px;
+    }
+}
+
+/* 8) Mobile muito pequeno: largura <= 359 e altura <= 600 */
+@media (max-width: 359px) and (max-height: 600px) {
+    body {
+        background-image: url('./imagens/smartfone.png');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #ede8d0;
+    }
+
+    .bg-video {
+        display: none;
+    }
+
+    .conteiner-top {
+        position: relative;
+        height: auto;
+        min-height: 31vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.1rem 0.6rem 0.5rem;
+        background: rgba(22, 14, 54, 0.42);
+    }
+
+    .logotipo {
+        position: static;
+        width: clamp(88px, 31vw, 120px);
+        margin: 0 0 0.45rem;
+    }
+
+    h1 {
+        position: static;
+        left: auto;
+        top: auto;
+        font-size: clamp(1.55rem, 10.5vw, 2.1rem);
+        text-align: center;
+        color: #f4ecd6;
+        letter-spacing: 1px;
+    }
+
+    p {
+        position: static;
+        left: auto;
+        top: auto;
+        margin-top: 0.2rem;
+        font-size: 0.75rem;
+        text-align: center;
+        color: #e3d7ff;
+        max-width: 96%;
+    }
+
+    .conteiner-menu {
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: 0.55rem;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.82rem;
+        padding: 0;
+    }
+
+    .menu {
+        font-size: clamp(1.28rem, 10.8vw, 1.85rem);
+        color: #f4ecd6;
+    }
+
+    .menu-item {
+        width: min(95vw, 300px);
+        text-align: center;
+    }
+
+    .services-menu > .submenu,
+    .institutional-menu > .submenu,
+    .institutional-menu > .institutional-submenu {
+        position: static;
+        bottom: auto;
+        top: auto;
+        left: auto;
+        transform: none;
+        width: 100%;
+        min-width: 0;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0.4rem;
+        border-radius: 10px;
+        text-align: center;
+        background: rgba(255, 241, 217, 0.95);
+        padding: 0.4rem 0.55rem;
+    }
+
+    .submenu a,
+    .institutional-submenu a {
+        color: #2a204f;
+        font-size: 0.84rem;
+        padding: 0.5rem 0.18rem;
+        white-space: normal;
+    }
+
+    .quem-somos-section {
+        width: 96vw;
+        top: 55%;
+        max-height: 65vh;
+        padding: 0.85rem 0.72rem;
+        border-radius: 14px;
+        overflow-y: auto;
+    }
+
+    .quem-somos-section h2 {
+        margin-top: 0;
+        font-size: 1.14rem;
+    }
+
+    .quem-somos-section p {
+        font-size: 0.75rem;
+        line-height: 1.32;
+    }
+
+    .portfolio-section {
+        top: 35vh;
+        height: 63vh;
+    }
+
+    .portfolio-box {
+        border-radius: 12px;
+        padding: 0.6rem 0.45rem;
+    }
+
+    .portfolio-img {
+        max-width: 94vw;
+        max-height: 49vh;
+    }
+
+    .usinagem-artesanato-window,
+    .institucional-videos-window {
+        top: 35vh;
+        bottom: 1.6vh;
+        left: 1.4vw;
+        right: 1.4vw;
+        border-radius: 12px;
+        padding: 0.62rem;
+    }
+
+    .usinagem-artesanato-window h2,
+    .institucional-videos-window h2 {
+        font-size: 1.14rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .artesanato-grid,
+    #institucional-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+    }
+
+    .video-title {
+        font-size: 0.9rem;
+    }
+
+    .video-hint {
+        font-size: 0.78rem;
+    }
+
+    .bg-audio-control {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        bottom: 0.55rem;
+        width: 95vw;
+        max-width: 320px;
+        gap: 0.35rem;
+        padding: 0.38rem 0.45rem;
+        background: rgba(255, 241, 217, 0.95);
+        border-radius: 999px;
+    }
+
+    .bg-audio-toggle {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        font-size: 0.95rem;
+    }
+
+    .bg-audio-label {
+        display: block;
+        color: #2f2559;
+        font-weight: 700;
+        font-size: 0.72rem;
+    }
+
+    .bg-audio-volume {
+        width: 72px;
+    }
+}
+
+/* ============================================= AJUSTE DE EXIBICAO DO PORTFOLIO ============================================= */
+
+.portfolio-section {
+    padding: 1rem 2vw;
+    box-sizing: border-box;
+}
+
+.portfolio-box {
+    width: min(88vw, 800px);
+    max-height: min(70vh, 600px);
+    overflow: hidden;
+}
+
+.portfolio-img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: min(70vh, 600px);
+    object-fit: contain;
+}
+
+@media (max-width: 1023px) {
+    .portfolio-box {
+        width: min(94vw, 400px);
+        max-height: min(64vh, 520px);
+        padding: 0;
+    }
+}
+
+/* ============================================= SUBMENU INSTITUCIONAL: ACIMA APENAS FAIXAS 5-8 ============================================= */
+
+@media (min-width: 640px) and (max-width: 767px) and (min-height: 700px),
+       (min-width: 480px) and (max-width: 639px) and (min-height: 650px),
+       (min-width: 360px) and (max-width: 479px) and (min-height: 620px),
+       (max-width: 359px) and (max-height: 600px) {
+    body {
+        overflow-y: auto;
+    }
+
+    .conteiner {
+        height: auto;
+        min-height: 100vh;
+        padding-bottom: 0.9rem;
+    }
+
+    .institutional-menu > .institutional-submenu {
+        position: absolute;
+        top: auto;
+        bottom: calc(100% + 10px);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .portfolio-section {
+        overflow-y: auto;
+        overflow-x: hidden;
+        justify-content: flex-start;
+        align-items: flex-start;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .portfolio-box {
+        width: min(94vw, 430px);
+        max-height: none;
+        overflow: visible;
+        margin: 0 auto;
+    }
+
+    .portfolio-desktop {
+        display: none;
+    }
+
+    .portfolio-mobile {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: none;
+        object-fit: contain;
+    }
+
+    .bg-audio-control.bg-audio-control-inline {
+        margin-top: 0.75rem;
     }
 }

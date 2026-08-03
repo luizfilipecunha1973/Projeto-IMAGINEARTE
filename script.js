@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', () =>  {                              // (HOME)Espera o carregamento completo do HTML antes de executar o script
     const backgroundVideo = document.querySelector('.bg-video');                    // (AUDIO)Seleciona video de fundo para controle de som
+    const backgroundAudioPlayer = document.getElementById('bg-audio-player');      // (AUDIO)Seleciona o player de áudio do layout mobile
     const backgroundAudioToggle = document.getElementById('bg-audio-toggle');      // (AUDIO)Seleciona botao de alternancia som/mudo
     const backgroundAudioVolume = document.getElementById('bg-audio-volume');      // (AUDIO)Seleciona slider de volume
+    const backgroundAudioControl = document.querySelector('.bg-audio-control');     // (AUDIO)Seleciona cápsula visual do controle de volume
+    const backgroundAudioControlOriginalParent = backgroundAudioControl ? backgroundAudioControl.parentElement : null; // (AUDIO)Guarda pai original para restauração
+    const backgroundAudioControlOriginalNextSibling = backgroundAudioControl ? backgroundAudioControl.nextElementSibling : null; // (AUDIO)Guarda próximo irmão para voltar à posição inicial
     const homeLink = document.querySelector('.home-link');                         // (HOME)Seleciona o link Home
     const quemSomosLink = document.querySelector('.quem-somos-link');              // (QUEM)Seleciona o link Quem Somos
     const quemSomosSection = document.querySelector('.quem-somos-section');        // (QUEM)Seleciona a seção Quem Somos
@@ -27,11 +31,14 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     const institucionalVideosWindow = document.getElementById('institucional-videos'); // (INST.)Seleciona janela de vídeos institucionais
     const institucionalGrid = document.getElementById('institucional-grid');        // (INST.)Seleciona grid de vídeos institucionais
     const depoimentosSection = document.getElementById('depoimentos-section');      // (DEP.)Seleciona seção de depoimentos
+    const depoimentosContainer = depoimentosSection ? depoimentosSection.querySelector('.depoimentos-container') : null; // (DEP.)Seleciona a caixa interna de depoimentos
     const depoimentosForm = document.getElementById('depoimentos-form');            // (DEP.)Seleciona formulário de depoimentos
     const depoimentosLista = document.getElementById('depoimentos-lista');          // (DEP.)Seleciona container de depoimentos
     const whatsappContactLink = document.getElementById('whatsapp-contact-link');  // (CONTATO)Seleciona o link do WhatsApp na caixa de contatos
     const videoModal = document.getElementById('video-modal');                      // (VIDEO)Seleciona o overlay da visualização ampliada
     const videoModalBox = videoModal ? videoModal.querySelector('.video-modal-box') : null; // (VIDEO)Seleciona a caixa principal do modal
+    const portfolioBox = portfolioSection ? portfolioSection.querySelector('.portfolio-box') : null; // (PORT.)Seleciona a caixa interna do portfólio
+    const contactBox = contactModal ? contactModal.querySelector('.contact-box') : null; // (CONTATO)Seleciona a caixa interna do modal de contatos
     const videoModalClose = videoModal ? videoModal.querySelector('.video-modal-close') : null; // (VIDEO)Seleciona botão de fechar da visualização
     const videoModalTitle = document.getElementById('video-modal-title');           // (VIDEO)Seleciona título da janela de visualização
     const videoModalCounter = document.getElementById('video-modal-counter');       // (VIDEO)Seleciona contador da posição do vídeo na lista
@@ -43,21 +50,145 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     let currentVideoIndex = -1;                                                      // (VIDEO)Guarda índice do vídeo em reprodução no modal
     let videoModalCloseTimer = null;                                                 // (VIDEO)Controla timer da animação de fechamento
     let lastBackgroundVolume = 0.6;                                                  // (AUDIO)Guarda ultimo volume audivel antes do mudo
+    let institutionalPinnedOpen = false;                                             // (INST.)Mantém submenu aberto quando ativado por clique
+
+    const getLayoutBand = () => {
+        const width = window.innerWidth;
+        if (width > 1600) return 1;
+        if (width > 1366) return 2;
+        if (width > 1024) return 3;
+        if (width > 768) return 4;
+        if (width > 640) return 5;
+        if (width > 480) return 6;
+        if (width > 360) return 7;
+        return 8;
+    };
+
+    const isMobileLayout = () => {
+        const band = getLayoutBand();
+        return band >= 5;
+    };
+
+    const shouldReturnHomeOnOutsideClick = () => {                                  // (RESP.)Aplica retorno à home somente nas faixas mobile definidas
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const isLargeMobile = width >= 640 && width <= 767 && height >= 700;       // (RESP.)5º Mobile grande
+        const isMediumMobile = width >= 480 && width <= 639 && height >= 650;      // (RESP.)6º Mobile médio
+        const isSmallMobile = width >= 360 && width <= 479 && height >= 620;       // (RESP.)7º Mobile pequeno
+        const isVerySmallMobile = width <= 359 && height <= 600;                    // (RESP.)8º Mobile muito pequeno
+
+        return isLargeMobile || isMediumMobile || isSmallMobile || isVerySmallMobile;
+    };
+
+    const updateAudioControlPlacement = () => {                                      // (AUDIO)Posiciona controle abaixo do link Institucional apenas no mobile alvo
+        if (!backgroundAudioControl) {
+            return;
+        }
+
+        const shouldInlineOnMobile = shouldReturnHomeOnOutsideClick();
+        if (shouldInlineOnMobile && institutionalMenu) {
+            if (backgroundAudioControl.parentElement !== institutionalMenu) {
+                institutionalMenu.insertBefore(backgroundAudioControl, institutionalSubmenu || null);
+            }
+            backgroundAudioControl.classList.add('bg-audio-control-inline');
+            return;
+        }
+
+        backgroundAudioControl.classList.remove('bg-audio-control-inline');
+        if (!backgroundAudioControlOriginalParent) {
+            return;
+        }
+
+        if (backgroundAudioControlOriginalNextSibling && backgroundAudioControlOriginalNextSibling.parentElement === backgroundAudioControlOriginalParent) {
+            backgroundAudioControlOriginalParent.insertBefore(backgroundAudioControl, backgroundAudioControlOriginalNextSibling);
+            return;
+        }
+
+        if (backgroundAudioControl.parentElement !== backgroundAudioControlOriginalParent) {
+            backgroundAudioControlOriginalParent.appendChild(backgroundAudioControl);
+        }
+    };
+
+    const isElementVisible = (element) => {                                          // (RESP.)Confere visibilidade real para detectar caixas abertas
+        return Boolean(element) && window.getComputedStyle(element).display !== 'none';
+    };
+
+    const getOpenContentBoxes = () => {                                              // (RESP.)Lista caixas abertas que devem reagir a clique fora
+        const openedBoxes = [];
+
+        if (isElementVisible(quemSomosSection)) {
+            openedBoxes.push(quemSomosSection);
+        }
+
+        if (isElementVisible(portfolioSection) && portfolioBox) {
+            openedBoxes.push(portfolioBox);
+        }
+
+        if (isElementVisible(artesanatoWindow)) {
+            openedBoxes.push(artesanatoWindow);
+        }
+
+        if (isElementVisible(residencialWindow)) {
+            openedBoxes.push(residencialWindow);
+        }
+
+        if (isElementVisible(institucionalVideosWindow)) {
+            openedBoxes.push(institucionalVideosWindow);
+        }
+
+        if (isElementVisible(depoimentosSection) && depoimentosContainer) {
+            openedBoxes.push(depoimentosContainer);
+        }
+
+        if (isElementVisible(contactModal) && contactBox) {
+            openedBoxes.push(contactBox);
+        }
+
+        if (isElementVisible(videoModal) && videoModalBox) {
+            openedBoxes.push(videoModalBox);
+        }
+
+        return openedBoxes;
+    };
 
     const syncBackgroundAudioUi = () => {                                            // (AUDIO)Atualiza estado visual do botao e slider
         if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume) {
             return;
         }
 
-        const isMuted = backgroundVideo.muted || backgroundVideo.volume === 0;       // (AUDIO)Define estado mudo considerando volume zero
+        const useMobileAudio = isMobileLayout();
+        const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+        const isMuted = activeMedia.muted || activeMedia.volume === 0;               // (AUDIO)Define estado mudo considerando volume zero
         backgroundAudioToggle.textContent = isMuted ? '🔇' : '🔊';                     // (AUDIO)Altera icone conforme estado atual
         backgroundAudioToggle.setAttribute('aria-label', isMuted ? 'Ativar audio' : 'Colocar audio no mudo');
         backgroundAudioToggle.setAttribute('aria-pressed', String(!isMuted));
-        backgroundAudioVolume.value = String(backgroundVideo.volume);                 // (AUDIO)Sincroniza slider com volume real
+        backgroundAudioVolume.value = String(activeMedia.volume);                    // (AUDIO)Sincroniza slider com volume real
+    };
+
+    const updateBackgroundMediaMode = (useMobileAudio) => {
+        document.body.classList.toggle('mobile-background-layout', useMobileAudio);
+        document.body.classList.toggle('video-background-layout', !useMobileAudio);
+    };
+
+    const tryPlayBackgroundMedia = async (media) => {
+        if (!media || typeof media.play !== 'function') {
+            return false;
+        }
+
+        try {
+            await media.play();
+            return true;
+        } catch (error) {
+            if (error && error.name !== 'AbortError') {
+                console.warn('Não foi possível iniciar a reprodução automática do conteúdo de fundo:', error);
+            }
+            return false;
+        }
     };
 
     const initializeBackgroundAudio = () => {                                        // (AUDIO)Configura estado inicial de audio do video de fundo
-        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume) {
+        if (!backgroundVideo || !backgroundAudioToggle || !backgroundAudioVolume || !backgroundAudioPlayer) {
             return;
         }
 
@@ -68,19 +199,48 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
 
         backgroundVideo.volume = safeInitialVolume;                                  // (AUDIO)Define volume padrao inicial
         backgroundVideo.muted = true;                                                // (AUDIO)Mantem mudo ate interacao do usuario
+        backgroundAudioPlayer.volume = safeInitialVolume;                            // (AUDIO)Define volume do áudio mobile
+        backgroundAudioPlayer.muted = true;                                          // (AUDIO)Mantem o áudio mobile mudo até interação
         syncBackgroundAudioUi();                                                     // (AUDIO)Reflete estado inicial na interface
 
+        const applyBackgroundMediaState = () => {                                    // (AUDIO)Alterna entre vídeo e áudio conforme a responsividade
+            const useMobileAudio = isMobileLayout();                                 // (AUDIO)Usa áudio mobile para as faixas solicitadas
+            updateBackgroundMediaMode(useMobileAudio);
+
+            if (useMobileAudio) {
+                if (typeof backgroundVideo.pause === 'function') {
+                    backgroundVideo.pause();
+                }
+                backgroundVideo.style.display = 'block';
+                backgroundVideo.muted = true;
+                backgroundAudioPlayer.volume = backgroundAudioPlayer.volume > 0 ? backgroundAudioPlayer.volume : safeInitialVolume;
+                backgroundAudioPlayer.muted = backgroundAudioPlayer.volume === 0;
+                tryPlayBackgroundMedia(backgroundAudioPlayer);
+            } else {
+                if (typeof backgroundAudioPlayer.pause === 'function') {
+                    backgroundAudioPlayer.pause();
+                }
+                backgroundVideo.style.display = 'block';
+                backgroundVideo.volume = backgroundVideo.volume > 0 ? backgroundVideo.volume : safeInitialVolume;
+                backgroundVideo.muted = backgroundVideo.volume === 0;
+                tryPlayBackgroundMedia(backgroundVideo);
+            }
+        };
+
         backgroundAudioToggle.addEventListener('click', () => {                      // (AUDIO)Alterna entre mudo e audivel
-            if (backgroundVideo.muted || backgroundVideo.volume === 0) {
+            const useMobileAudio = isMobileLayout();                                 // (AUDIO)Escolhe o media ativo conforme a faixa
+            const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+
+            if (activeMedia.muted || activeMedia.volume === 0) {
                 const restoredVolume = lastBackgroundVolume > 0 ? lastBackgroundVolume : 0.6;
-                backgroundVideo.muted = false;
-                backgroundVideo.volume = restoredVolume;
-                backgroundVideo.play().catch(() => {
+                activeMedia.muted = false;
+                activeMedia.volume = restoredVolume;
+                activeMedia.play().catch(() => {
                     // (AUDIO)Ignora bloqueios de reproducao automatica do navegador
                 });
             } else {
-                lastBackgroundVolume = backgroundVideo.volume > 0 ? backgroundVideo.volume : lastBackgroundVolume;
-                backgroundVideo.muted = true;
+                lastBackgroundVolume = activeMedia.volume > 0 ? activeMedia.volume : lastBackgroundVolume;
+                activeMedia.muted = true;
             }
 
             syncBackgroundAudioUi();
@@ -93,14 +253,16 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             }
 
             const safeVolume = Math.min(1, Math.max(0, newVolume));
-            backgroundVideo.volume = safeVolume;
+            const useMobileAudio = isMobileLayout();                                 // (AUDIO)Aplica o volume ao media correto
+            const activeMedia = useMobileAudio ? backgroundAudioPlayer : backgroundVideo;
+            activeMedia.volume = safeVolume;
 
             if (safeVolume === 0) {
-                backgroundVideo.muted = true;                                        // (AUDIO)Volume zero equivale a modo mudo
+                activeMedia.muted = true;                                             // (AUDIO)Volume zero equivale a modo mudo
             } else {
                 lastBackgroundVolume = safeVolume;
-                backgroundVideo.muted = false;
-                backgroundVideo.play().catch(() => {
+                activeMedia.muted = false;
+                activeMedia.play().catch(() => {
                     // (AUDIO)Ignora bloqueios de reproducao automatica do navegador
                 });
             }
@@ -109,6 +271,33 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         });
 
         backgroundVideo.addEventListener('volumechange', syncBackgroundAudioUi);     // (AUDIO)Sincroniza UI em qualquer mudanca externa
+        backgroundAudioPlayer.addEventListener('volumechange', syncBackgroundAudioUi); // (AUDIO)Sincroniza UI do áudio mobile
+        ['loadedmetadata', 'canplay', 'canplaythrough'].forEach((eventName) => {
+            backgroundVideo.addEventListener(eventName, () => {
+                tryPlayBackgroundMedia(backgroundVideo);
+            });
+        });
+        ['mousedown', 'touchstart', 'keydown', 'pointerdown'].forEach((eventName) => {
+            document.addEventListener(eventName, () => {
+                if (!backgroundVideo.paused && !backgroundVideo.muted) {
+                    return;
+                }
+
+                if (isMobileLayout()) {
+                    tryPlayBackgroundMedia(backgroundAudioPlayer);
+                } else {
+                    tryPlayBackgroundMedia(backgroundVideo);
+                }
+            }, { once: true });
+        });
+        window.addEventListener('resize', () => {                                    // (AUDIO)Atualiza o media ativo quando a tela mudar de faixa
+            syncBackgroundAudioUi();
+            applyBackgroundMediaState();
+            updateAudioControlPlacement();
+        });
+
+        applyBackgroundMediaState();                                                 // (AUDIO)Aplica o mídia correto ao carregar a página
+        updateAudioControlPlacement();                                               // (AUDIO)Aplica posição do controle conforme responsividade
     };
 
     const hideQuemSomos = () => {                                                   // (QUEM)Função para esconder a seção Quem Somos
@@ -150,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     const closeInstitucionalSubmenu = () => {                                       // (INST.)Função para fechar o submenu de Institucional
         if (institutionalMenu) {                                                    // (INST.)Confirma se o menu existe antes de fechar
             institutionalMenu.classList.remove('open');                             // (INST.)Remove a classe que mantém o submenu aberto
+            institutionalPinnedOpen = false;                                         // (INST.)Libera o modo fixo após fechar
         }
     };                                                                              // (INST.)Fim da função closeInstitucionalSubmenu
 
@@ -158,6 +348,20 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             servicesMenu.classList.remove('open');                                  // (SERV.)Remove a classe que mantém o submenu aberto
         }
     };                                                                              // (SERV.)Fim da função closeSubmenu
+
+    const resetToHome = () => {                                                     // (RESP.)Fecha conteúdos abertos e volta para a home
+        hideQuemSomos();                                                            // (RESP.)Esconde a seção Quem Somos
+        hidePortfolio();                                                            // (RESP.)Esconde o portfólio
+        hideArtesanatoWindow();                                                     // (RESP.)Esconde a janela de usinagem
+        hideResidencialWindow();                                                    // (RESP.)Esconde a janela residencial
+        hideInstitucionalVideos();                                                  // (RESP.)Esconde a janela de vídeos institucionais
+        hideDepoimentos();                                                          // (RESP.)Esconde a seção de depoimentos
+        closeContactModal();                                                        // (RESP.)Fecha o modal de contatos
+        closeVideoModal();                                                          // (RESP.)Fecha o modal de vídeo
+        closeSubmenu();                                                             // (RESP.)Fecha o submenu de serviços
+        closeInstitucionalSubmenu();                                                // (RESP.)Fecha o submenu institucional
+        window.scrollTo({ top: 0, behavior: 'smooth' });                            // (RESP.)Rola para o topo da home
+    };                                                                              // (RESP.)Fim da função resetToHome
 
     const openContactModal = () => {                                                // (CONTATO)Abre a caixa de contatos
         if (contactModal) {                                                         // (CONTATO)Confirma se o modal existe antes de abrir
@@ -811,6 +1015,9 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         contactModal.addEventListener('click', (event) => {                         // (CONTATO)Escuta cliques na área do overlay
             if (event.target === contactModal) {                                    // (CONTATO)Fecha apenas quando o clique for no fundo
                 closeContactModal();                                                // (CONTATO)Fecha o modal ao clicar fora do conteúdo interno
+                if (shouldReturnHomeOnOutsideClick()) {                             // (RESP.)Nas faixas mobile definidas, volta para a home ao clicar fora
+                    resetToHome();                                                 // (RESP.)Retorna à home
+                }
             }
         });                                                                           // (CONTATO)Fim do handler de clique no overlay
     }
@@ -820,7 +1027,11 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             if (event.target === depoimentosSection) {                              // (DEP.)Confere se clique foi no fundo escurecido
                 hideDepoimentos();                                                  // (DEP.)Fecha a seção de depoimentos
                 closeInstitucionalSubmenu();                                        // (INST.)Garante submenu fechado ao retornar
-                window.scrollTo({ top: 0, behavior: 'smooth' });                    // (HOME)Retorna a visualização ao topo da Home
+                if (shouldReturnHomeOnOutsideClick()) {                             // (RESP.)Nas faixas mobile definidas, volta para a home ao clicar fora
+                    resetToHome();                                                 // (RESP.)Retorna à home
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });                // (HOME)Retorna a visualização ao topo da Home
+                }
             }
         });                                                                         // (DEP.)Fim do handler de clique no overlay
     }
@@ -829,9 +1040,62 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         videoModal.addEventListener('click', (event) => {                           // (VIDEO)Escuta cliques no overlay da visualização
             if (event.target === videoModal) {                                      // (VIDEO)Confirma clique apenas no fundo escurecido
                 closeVideoModal();                                                  // (VIDEO)Fecha modal quando usuário clica fora da caixa
+                if (shouldReturnHomeOnOutsideClick()) {                             // (RESP.)Nas faixas mobile definidas, volta para a home ao clicar fora
+                    resetToHome();                                                 // (RESP.)Retorna à home
+                }
             }
         });
     }
+
+    document.addEventListener('click', (event) => {                                  // (RESP.)Retorna à home ao clicar fora de caixas abertas nas faixas móveis alvo
+        if (!shouldReturnHomeOnOutsideClick()) {
+            return;
+        }
+
+        if (!(event.target instanceof Element)) {
+            return;
+        }
+
+        const clickedQuemSomosTrigger = event.target.closest('.quem-somos-link');
+        if (clickedQuemSomosTrigger) {
+            return;
+        }
+
+        const isQuemSomosOpen = isElementVisible(quemSomosSection);
+        if (isQuemSomosOpen && !quemSomosSection.contains(event.target)) {
+            resetToHome();
+            return;
+        }
+
+        const isInstitutionalSubmenuOpen = institutionalMenu && institutionalMenu.classList.contains('open');
+        if (isInstitutionalSubmenuOpen && !institutionalMenu.contains(event.target)) {
+            resetToHome();
+            return;
+        }
+
+        const isInstitutionalVideosOpen = isElementVisible(institucionalVideosWindow);
+        if (isInstitutionalVideosOpen && !institucionalVideosWindow.contains(event.target)) {
+            resetToHome();
+            return;
+        }
+
+        const openBoxes = getOpenContentBoxes();
+        if (!openBoxes.length) {
+            return;
+        }
+
+        const clickedInsideOpenBox = openBoxes.some((box) => box.contains(event.target));
+        if (clickedInsideOpenBox) {
+            return;
+        }
+
+        const clickedInsideUiControls = event.target.closest('.conteiner-menu, .conteiner-top, .bg-audio-control');
+        if (clickedInsideUiControls) {
+            return;
+        }
+
+        resetToHome();
+    });
 
     if (videoModalClose) {                                                          // (VIDEO)Fecha janela ampliada pelo botão x
         videoModalClose.addEventListener('click', () => {                           // (VIDEO)Escuta clique no botão de fechar
@@ -941,22 +1205,34 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         });                                                                           // (INST.)Fim do handler de mouseenter
 
         institutionalMenu.addEventListener('mouseleave', () => {                    // (INST.)Esconde o submenu ao sair
-            if (!institutionalSubmenu.matches(':hover')) {                          // (INST.)Mantém aberto se o cursor estiver no submenu
+            if (!institutionalPinnedOpen && !institutionalSubmenu.matches(':hover')) { // (INST.)Fecha no hover apenas quando não estiver fixado por clique
                 closeInstitucionalSubmenu();                                        // (INST.)Fecha apenas quando o submenu não estiver sob o cursor
             }
         });                                                                           // (INST.)Fim do handler de mouseleave
 
-        institutionalMenu.addEventListener('click', (event) => {                    // (INST.)Alterna o submenu ao clicar
+        institutionalMenu.addEventListener('click', (event) => {                    // (INST.)Alterna o submenu ao clicar no link principal
+            const clickedMainLink = event.target.closest('.menu');                  // (INST.)Detecta clique apenas no gatilho principal
+            if (!clickedMainLink || !institutionalMenu.contains(clickedMainLink)) { // (INST.)Ignora cliques fora do link principal
+                return;
+            }
+
             event.preventDefault();                                                 // (INST.)Impede navegação padrão
+            event.stopPropagation();                                                // (INST.)Evita propagação desnecessária
+            const willOpen = !institutionalMenu.classList.contains('open');         // (INST.)Calcula estado futuro após o clique
             institutionalMenu.classList.toggle('open');                             // (INST.)Alterna entre aberto e fechado
+            institutionalPinnedOpen = willOpen;                                     // (INST.)Fixar aberto ao clicar e liberar ao clicar de novo
         });                                                                           // (INST.)Fim do handler de clique
+
+        institutionalSubmenu.addEventListener('click', (event) => {                // (INST.)Mantém cliques internos livres para seleção
+            event.stopPropagation();                                                // (INST.)Impede que o menu-pai feche antes da ação do item
+        });                                                                           // (INST.)Fim do handler de clique interno
 
         institutionalSubmenu.addEventListener('mouseenter', () => {                 // (INST.)Mantém aberto ao entrar no submenu
             institutionalMenu.classList.add('open');                                // (INST.)Reforça o estado aberto
         });                                                                           // (INST.)Fim do handler de mouseenter
 
         institutionalSubmenu.addEventListener('mouseleave', () => {                 // (INST.)Esconde ao sair do submenu
-            if (!institutionalMenu.matches(':hover')) {                             // (INST.)Fecha somente se o menu também não estiver ativo
+            if (!institutionalPinnedOpen && !institutionalMenu.matches(':hover')) { // (INST.)Fecha no hover apenas quando não estiver fixado por clique
                 closeInstitucionalSubmenu();                                        // (INST.)Remove o estado aberto
             }
         });                                                                           // (INST.)Fim do handler de mouseleave

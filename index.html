@@ -17,11 +17,13 @@
 
 <body> <!-- Contém todo o conteúdo visível da página, como texto, imagens e elementos interativos -->
 
-    <!-- Vídeo de fundo: arquivo localizado na pasta raiz do projeto -->
-    <video class="bg-video" autoplay muted loop playsinline poster="./Logo%20fundo%20HEX%20%23ede8d0.png" aria-hidden="true">
+    <!-- Vídeo de fundo: arquivo localizado na pasta de imagens do projeto -->
+    <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="./imagens/Logo%20fundo%20HEX%20%23ede8d0.png" aria-hidden="true">
         <source src="./videos/institucionais/Publicidade.mp4" type="video/mp4">
         Seu navegador não suporta vídeo em background.
     </video>
+
+    <audio id="bg-audio-player" class="bg-audio-player" preload="auto" loop aria-hidden="true" src="./audio/responsividade.MP3"></audio>
 
     <div class="bg-audio-control" role="group" aria-label="Controle de audio do video de fundo">
         <button id="bg-audio-toggle" class="bg-audio-toggle" type="button" aria-label="Ativar audio" aria-pressed="false">
