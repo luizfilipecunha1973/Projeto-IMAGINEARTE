@@ -93,6 +93,7 @@ npm start
 
 - Se ADMIN_TOKEN estiver configurado, DELETE exige autorizacao.
 - O painel administrativo usa o mesmo token para upload de videos MP4.
+- A categoria Residencial pode permanecer sem arquivos; nesse caso o frontend exibe o aviso Em breve.
 - O frontend pode:
   - Fazer login com usuario/senha em POST /api/admin/login
   - Ou enviar token manual no header X-Admin-Token

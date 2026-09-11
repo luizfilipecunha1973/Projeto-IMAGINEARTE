@@ -156,7 +156,7 @@ IMAGINEARTE/
 - 001-Lancamento.mp4
 - 002-Publicidade.mp4
 
-Observacao: a categoria Residencial existe no menu, mas permanece com o aviso Em breve ate que sejam fornecidos videos dessa categoria.
+Observacao: a categoria Residencial permanece intencionalmente com o aviso Em breve. O catalogo dinamico ja esta preparado para receber videos futuramente.
 
 ## Como executar
 
@@ -402,7 +402,6 @@ O servidor limita o upload a 500 MB, remove caracteres inseguros, adiciona prefi
 
 ## Melhorias futuras
 
-- Area residencial com conteudo real, dependente do envio dos videos correspondentes
 - Moderacao administrativa mais avancada, como filtros e historico de alteracoes
 - Validacao operacional do deploy na Hostinger, incluindo health check, depoimentos, exclusao autenticada e persistencia apos reinicio
 
