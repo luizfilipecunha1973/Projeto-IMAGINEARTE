@@ -139,9 +139,41 @@
                     </form>
                 </div>
                 <div class="depoimentos-display-area"> <!-- DEP. Área de exibição dos depoimentos -->
-                    <h2>Depoimentos de Clientes</h2> <!-- DEP. Título -->
+                    <div class="depoimentos-heading"> <!-- DEP. Cabeçalho da lista e acesso administrativo -->
+                        <h2>Depoimentos de Clientes</h2> <!-- DEP. Título -->
+                        <button id="admin-panel-open" class="admin-panel-button" type="button">Administração</button> <!-- ADMIN. Abre painel protegido -->
+                    </div>
                     <div id="depoimentos-lista" class="depoimentos-lista"></div> <!-- DEP. Container dos depoimentos -->
                 </div>
+            </div>
+        </section>
+
+        <section id="admin-panel" class="admin-panel" style="display: none;" aria-hidden="true"> <!-- ADMIN. Painel protegido para manutenção -->
+            <div class="admin-panel-box" role="dialog" aria-modal="true" aria-labelledby="admin-panel-title"> <!-- ADMIN. Caixa principal do painel -->
+                <button id="admin-panel-close" class="admin-panel-close" type="button" aria-label="Fechar administração">x</button> <!-- ADMIN. Fecha o painel -->
+                <h2 id="admin-panel-title">Administração</h2> <!-- ADMIN. Título do painel -->
+                <form id="admin-login-form" class="admin-form"> <!-- ADMIN. Login do administrador -->
+                    <label for="admin-username">Usuário</label>
+                    <input id="admin-username" name="username" type="text" autocomplete="username" required>
+                    <label for="admin-password">Senha</label>
+                    <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+                    <button type="submit" class="admin-action-button">Entrar</button>
+                </form>
+                <form id="admin-upload-form" class="admin-form" hidden> <!-- ADMIN. Upload protegido de vídeos -->
+                    <p id="admin-authenticated-as" class="admin-status"></p>
+                    <label for="admin-video-category">Categoria</label>
+                    <select id="admin-video-category" name="category" required>
+                        <option value="artesanato">Artesanato</option>
+                        <option value="comercial">Comercial</option>
+                        <option value="residencial">Residencial</option>
+                        <option value="institucionais">Institucionais</option>
+                    </select>
+                    <label for="admin-video-file">Vídeo MP4</label>
+                    <input id="admin-video-file" name="video" type="file" accept="video/mp4,.mp4" required>
+                    <button type="submit" class="admin-action-button">Enviar vídeo</button>
+                    <button id="admin-logout" class="admin-secondary-button" type="button">Sair</button>
+                </form>
+                <p id="admin-panel-status" class="admin-status" role="status" aria-live="polite"></p>
             </div>
         </section>
 

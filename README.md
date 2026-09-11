@@ -90,6 +90,8 @@ Modal com:
 - Lista de depoimentos carregada via API
 - Exclusao de depoimento por botao
 - Dados persistidos em arquivo JSON
+- Painel administrativo com login protegido
+- Upload autenticado de videos MP4 para as categorias do catalogo
 
 ## Tecnologias
 
@@ -275,8 +277,10 @@ npm run dev
 - Persiste depoimentos no arquivo [depoimentos.json](depoimentos.json)
 - Endpoints:
 	- GET /api/estados
+	- GET /api/videos
 	- GET /api/health
 	- POST /api/admin/login
+	- POST /api/admin/videos
 	- GET /api/depoimentos
 	- POST /api/depoimentos
 	- DELETE /api/depoimentos/:id
@@ -288,6 +292,10 @@ npm run dev
 - Pode ser usada como fallback local
 
 ## API de depoimentos
+
+### GET /api/videos
+
+Retorna o catalogo atual de arquivos MP4 agrupado por categoria. O frontend usa essa rota para incluir videos enviados pelo painel administrativo sem alterar o codigo.
 
 ### GET /api/estados
 
@@ -329,6 +337,18 @@ Exemplo de payload:
 	"password": "sua-senha"
 }
 ```
+
+### POST /api/admin/videos
+
+Recebe o arquivo MP4 no corpo da requisicao e exige o token em `X-Admin-Token` ou `Authorization: Bearer`.
+
+Cabecalhos obrigatorios:
+
+- `X-Video-Category`: `artesanato`, `comercial`, `residencial` ou `institucionais`
+- `X-Video-Name`: nome original do arquivo, codificado com `encodeURIComponent`
+- `Content-Type: application/octet-stream`
+
+O servidor limita o upload a 500 MB, remove caracteres inseguros, adiciona prefixo numerico e grava o arquivo na pasta correspondente.
 
 ## Autenticacao admin no frontend
 
@@ -383,8 +403,7 @@ Exemplo de payload:
 ## Melhorias futuras
 
 - Area residencial com conteudo real, dependente do envio dos videos correspondentes
-- Painel administrativo dedicado para moderacao de depoimentos; atualmente a moderacao usa os endpoints protegidos e o fluxo de login/token do frontend
-- Upload de novos videos via interface
+- Moderacao administrativa mais avancada, como filtros e historico de alteracoes
 - Validacao operacional do deploy na Hostinger, incluindo health check, depoimentos, exclusao autenticada e persistencia apos reinicio
 
 ## Creditos

@@ -1130,6 +1130,122 @@ body.video-background-layout .bg-video {
     overflow: hidden;                   /* Mantém bordas limpas */
 }
 
+.depoimentos-heading {                   /* Cabeçalho da lista de depoimentos */
+    display: flex;                      /* Alinha título e ação administrativa */
+    align-items: center;                 /* Centraliza verticalmente os elementos */
+    justify-content: space-between;      /* Mantém a ação na extremidade direita */
+    gap: 0.75rem;                        /* Evita colisão em larguras menores */
+    margin-bottom: 0.7rem;               /* Separa cabeçalho da lista */
+}
+
+.depoimentos-heading h2 {                /* Título dentro do cabeçalho */
+    margin: 0;                           /* Evita deslocamento vertical inesperado */
+}
+
+.admin-panel-button,                     /* Botão de abertura do painel */
+.admin-action-button,                    /* Botão de ação protegida */
+.admin-secondary-button {                /* Botão secundário de saída */
+    border: none;                        /* Remove borda padrão */
+    border-radius: 999px;                /* Mantém linguagem visual dos controles existentes */
+    padding: 0.65rem 1rem;               /* Garante área de toque confortável */
+    font: inherit;                       /* Mantém a tipografia do projeto */
+    cursor: pointer;                     /* Indica ação clicável */
+}
+
+.admin-panel-button,                     /* Ação principal do cabeçalho */
+.admin-action-button {                   /* Ação principal do formulário */
+    background: var(--primary);          /* Usa a cor principal da marca */
+    color: #ffffff;                      /* Mantém contraste no botão */
+}
+
+.admin-panel-button:hover,                /* Hover do botão de abertura */
+.admin-action-button:hover {              /* Hover do botão de ação */
+    filter: brightness(0.92);             /* Dá feedback visual sem mudar o tema */
+}
+
+.admin-secondary-button {                /* Ação de encerramento de sessão */
+    background: #eeeeee;                  /* Diferencia ação secundária */
+    color: var(--primary);                /* Mantém vínculo visual com o tema */
+}
+
+.admin-panel {                            /* Overlay da administração */
+    position: fixed;                      /* Cobre a janela sem alterar o layout */
+    inset: 0;                             /* Ocupa toda a área visível */
+    z-index: 30;                          /* Fica acima dos modais existentes */
+    padding: 1rem;                        /* Cria respiro nas bordas */
+    overflow: auto;                       /* Permite uso em telas baixas */
+    background: rgba(0, 0, 0, 0.5);       /* Separa o painel do conteúdo */
+}
+
+.admin-panel-box {                        /* Caixa central da administração */
+    width: min(94vw, 520px);              /* Mantém leitura confortável */
+    margin: 8vh auto 0;                   /* Centraliza horizontalmente */
+    padding: 1.5rem;                      /* Cria espaço interno */
+    position: relative;                   /* Permite posicionar o fechamento */
+    background: #ffffff;                  /* Garante contraste nos formulários */
+    border-radius: 16px;                  /* Arredondamento consistente com o projeto */
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.25); /* Destaca a caixa sobre o overlay */
+}
+
+.admin-panel-box h2 {                     /* Título da administração */
+    margin: 0 0 1rem;                    /* Separa título dos campos */
+    color: var(--primary);                /* Usa a cor principal */
+    text-align: center;                   /* Centraliza o título */
+}
+
+.admin-panel-close {                      /* Fechamento do painel */
+    position: absolute;                   /* Fixa o botão no canto superior */
+    top: 0.7rem;                          /* Distância do topo */
+    right: 0.7rem;                        /* Distância da direita */
+    width: 32px;                          /* Dimensão estável */
+    height: 32px;                         /* Dimensão estável */
+    border: none;                         /* Remove borda padrão */
+    border-radius: 50%;                  /* Forma circular */
+    background: #eeeeee;                  /* Contraste discreto */
+    color: var(--primary);                /* Mantém cor do tema */
+    font-size: 1.2rem;                    /* Mantém o símbolo legível */
+    cursor: pointer;                      /* Indica ação */
+}
+
+.admin-form {                             /* Formulários administrativos */
+    display: grid;                        /* Organiza rótulos e campos */
+    gap: 0.55rem;                          /* Espaçamento compacto */
+}
+
+.admin-form[hidden] {                     /* Estado oculto dos formulários alternados */
+    display: none;                         /* Impede o CSS do formulário de sobrescrever o atributo hidden */
+}
+
+.admin-form + .admin-form {               /* Espaço entre login e upload */
+    margin-top: 1rem;                      /* Separa os dois estados do painel */
+}
+
+.admin-form label {                       /* Rótulos dos campos administrativos */
+    color: var(--primary);                /* Mantém contraste e identidade */
+    font-weight: 700;                     /* Facilita leitura */
+}
+
+.admin-form input,                        /* Entradas de texto e arquivo */
+.admin-form select {                      /* Seletor de categoria */
+    width: 100%;                          /* Usa toda a largura disponível */
+    box-sizing: border-box;                /* Inclui padding na dimensão */
+    padding: 0.7rem;                       /* Área de toque confortável */
+    border: 1px solid #cccccc;             /* Delimita campo no fundo branco */
+    border-radius: 6px;                    /* Arredondamento discreto */
+    font: inherit;                         /* Mantém a tipografia */
+}
+
+.admin-status {                            /* Mensagens de estado do painel */
+    min-height: 1.4em;                     /* Evita deslocamento ao atualizar texto */
+    margin: 0.8rem 0 0;                    /* Separa a mensagem da ação */
+    color: var(--primary);                 /* Estado normal */
+    text-align: center;                    /* Facilita leitura em mensagens curtas */
+}
+
+.admin-status.is-error {                   /* Estado de erro administrativo */
+    color: #b42318;                         /* Mantém contraste e semântica de erro */
+}
+
 #depoimentos-lista {                    /* Container da lista de depoimentos */
     display: grid;                      /* Grid layout */
     grid-template-columns: 1fr;         /* Uma coluna dentro da caixa */

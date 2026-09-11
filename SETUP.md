@@ -82,14 +82,17 @@ npm start
 
 - GET /api/health
 - GET /api/estados
+- GET /api/videos
 - GET /api/depoimentos
 - POST /api/depoimentos
 - DELETE /api/depoimentos/:id
 - POST /api/admin/login
+- POST /api/admin/videos
 
 ## Fluxo de autenticacao admin
 
 - Se ADMIN_TOKEN estiver configurado, DELETE exige autorizacao.
+- O painel administrativo usa o mesmo token para upload de videos MP4.
 - O frontend pode:
   - Fazer login com usuario/senha em POST /api/admin/login
   - Ou enviar token manual no header X-Admin-Token

@@ -44,6 +44,8 @@ loadEnvFile();
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number.parseInt(process.env.PORT || '3000', 10);
 const DATA_PATH = path.resolve(__dirname, process.env.DATA_PATH || 'depoimentos.json');
+const VIDEO_DIRECTORIES = new Set(['artesanato', 'comercial', 'residencial', 'institucionais']);
+const MAX_VIDEO_UPLOAD_BYTES = 500 * 1024 * 1024;
 const ADMIN_TOKEN = (process.env.ADMIN_TOKEN || '').trim();
 const ADMIN_USERNAME = (process.env.ADMIN_USERNAME || '').trim();
 const ADMIN_PASSWORD = (process.env.ADMIN_PASSWORD || '').trim();
@@ -269,6 +271,8 @@ const contentTypeByExtension = (ext) => {
     if (ext === '.css') return 'text/css; charset=utf-8';
     if (ext === '.json') return 'application/json; charset=utf-8';
     if (ext === '.mp4') return 'video/mp4';
+    if (ext === '.mp3' || ext === '.mpeg') return 'audio/mpeg';
+    if (ext === '.wav') return 'audio/wav';
     if (ext === '.png') return 'image/png';
     if (ext === '.jpg' || ext === '.jpeg') return 'image/jpeg';
     if (ext === '.svg') return 'image/svg+xml';
@@ -282,11 +286,96 @@ const resolveStaticPath = (pathname) => {
     const decodedPath = decodeURIComponent(relativePath);
     const resolvedPath = path.resolve(__dirname, decodedPath);
 
-    if (!resolvedPath.startsWith(__dirname)) {
+    const relativeResolvedPath = path.relative(__dirname, resolvedPath);
+    if (relativeResolvedPath.startsWith('..') || path.isAbsolute(relativeResolvedPath)) {
         return null;
     }
 
     return resolvedPath;
+};
+
+const sanitizeVideoName = (rawName) => {
+    const decodedName = decodeURIComponent((rawName || '').toString()).trim();
+    const baseName = path.basename(decodedName);
+    const extension = path.extname(baseName).toLowerCase();
+    const stem = path.basename(baseName, path.extname(baseName))
+        .replace(/^\d{3}-/, '')
+        .replace(/[^\p{L}\p{N}._ -]/gu, '')
+        .trim();
+
+    if (!stem || extension !== '.mp4') {
+        return null;
+    }
+
+    return `${stem}${extension}`;
+};
+
+const getNextVideoName = (directoryPath, fileName) => {
+    const entries = fs.existsSync(directoryPath) ? fs.readdirSync(directoryPath) : [];
+    const nextIndex = entries.reduce((max, entry) => {
+        const match = entry.match(/^(\d{3})-/);
+        return match ? Math.max(max, Number.parseInt(match[1], 10)) : max;
+    }, 0) + 1;
+
+    return `${String(nextIndex).padStart(3, '0')}-${fileName}`;
+};
+
+const listVideoCatalog = () => {                                                  // (VIDEO.)Lê os vídeos disponíveis no servidor
+    return Array.from(VIDEO_DIRECTORIES).reduce((catalog, category) => {           // (VIDEO.)Monta catálogo separado por categoria
+        const directoryPath = path.join(__dirname, 'videos', category);             // (VIDEO.)Calcula pasta da categoria
+        const entries = fs.existsSync(directoryPath) ? fs.readdirSync(directoryPath) : []; // (VIDEO.)Lê arquivos existentes
+        catalog[category] = entries
+            .filter((entry) => path.extname(entry).toLowerCase() === '.mp4')       // (VIDEO.)Ignora arquivos que não são MP4
+            .sort((first, second) => first.localeCompare(second, 'pt-BR', { numeric: true })) // (VIDEO.)Mantém ordem numérica
+            .map((entry) => ({                                                     // (VIDEO.)Converte arquivo para item do frontend
+                name: entry.replace(/^\d{3}-/, '').replace(/\.mp4$/i, ''),         // (VIDEO.)Remove prefixo técnico e extensão
+                src: `./videos/${category}/${encodeURIComponent(entry)}`            // (VIDEO.)Codifica nome para URL segura
+            }));
+        return catalog;                                                            // (VIDEO.)Retorna catálogo acumulado
+    }, {});
+};
+
+const streamVideoUpload = (req, destinationPath) => {
+    return new Promise((resolve, reject) => {
+        let totalBytes = 0;
+        const tempPath = `${destinationPath}.tmp-${process.pid}-${Date.now()}`;
+        const output = fs.createWriteStream(tempPath, { flags: 'wx' });
+        let settled = false;
+
+        const fail = (error) => {
+            if (settled) return;
+            settled = true;
+            output.destroy();
+            fs.rm(tempPath, { force: true }, () => reject(error));
+        };
+
+        req.on('data', (chunk) => {
+            totalBytes += chunk.length;
+            if (totalBytes > MAX_VIDEO_UPLOAD_BYTES) {
+                fail(new Error('Video muito grande. O limite e 500 MB.'));
+                req.destroy();
+                return;
+            }
+            output.write(chunk);
+        });
+
+        req.on('end', () => {
+            if (settled) return;
+            output.end(() => {
+                settled = true;
+                fs.rename(tempPath, destinationPath, (error) => {
+                    if (error) {
+                        fs.rm(tempPath, { force: true }, () => reject(error));
+                        return;
+                    }
+                    resolve(totalBytes);
+                });
+            });
+        });
+
+        req.on('error', fail);
+        output.on('error', fail);
+    });
 };
 
 const server = http.createServer(async (req, res) => {
@@ -340,8 +429,48 @@ const server = http.createServer(async (req, res) => {
             return;
         }
 
+        if (pathname === '/api/admin/videos' && req.method === 'POST') {
+            if (!ADMIN_TOKEN) {
+                jsonResponse(res, 503, { error: 'Upload admin nao configurado no servidor.' });
+                return;
+            }
+
+            if (!isDeleteAuthorized(req)) {
+                jsonResponse(res, 401, { error: 'Nao autorizado para enviar videos.' });
+                return;
+            }
+
+            const category = (req.headers['x-video-category'] || '').toString().trim().toLowerCase();
+            const cleanName = sanitizeVideoName(req.headers['x-video-name']);
+            const contentLength = Number.parseInt(req.headers['content-length'] || '0', 10);
+
+            if (!VIDEO_DIRECTORIES.has(category) || !cleanName || contentLength <= 0 || contentLength > MAX_VIDEO_UPLOAD_BYTES) {
+                jsonResponse(res, 400, { error: 'Categoria, nome ou tamanho do video invalido.' });
+                return;
+            }
+
+            const directoryPath = path.join(__dirname, 'videos', category);
+            fs.mkdirSync(directoryPath, { recursive: true });
+            const storedName = getNextVideoName(directoryPath, cleanName);
+            const destinationPath = path.join(directoryPath, storedName);
+            const bytes = await streamVideoUpload(req, destinationPath);
+
+            jsonResponse(res, 201, {
+                category,
+                name: storedName,
+                path: `./videos/${category}/${storedName}`,
+                bytes
+            });
+            return;
+        }
+
         if (pathname === '/api/estados' && req.method === 'GET') {
             jsonResponse(res, 200, ESTADOS_BRASIL);
+            return;
+        }
+
+        if (pathname === '/api/videos' && req.method === 'GET') {
+            jsonResponse(res, 200, listVideoCatalog());                            // (VIDEO.)Entrega catálogo atualizado ao frontend
             return;
         }
 

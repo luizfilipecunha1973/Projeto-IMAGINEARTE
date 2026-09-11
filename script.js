@@ -145,6 +145,14 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     const whatsappContactLink = document.getElementById('whatsapp-contact-link');  // (CONTATO)Seleciona o link do WhatsApp na caixa de contatos
     const videoModal = document.getElementById('video-modal');                      // (VIDEO)Seleciona o overlay da visualização ampliada
     const videoModalBox = videoModal ? videoModal.querySelector('.video-modal-box') : null; // (VIDEO)Seleciona a caixa principal do modal
+    const adminPanel = document.getElementById('admin-panel');                      // (ADMIN.)Seleciona o painel administrativo
+    const adminPanelOpen = document.getElementById('admin-panel-open');             // (ADMIN.)Seleciona botão de abertura do painel
+    const adminPanelClose = document.getElementById('admin-panel-close');           // (ADMIN.)Seleciona botão de fechamento do painel
+    const adminLoginForm = document.getElementById('admin-login-form');             // (ADMIN.)Seleciona formulário de login
+    const adminUploadForm = document.getElementById('admin-upload-form');           // (ADMIN.)Seleciona formulário de upload
+    const adminLogout = document.getElementById('admin-logout');                    // (ADMIN.)Seleciona botão de saída
+    const adminPanelStatus = document.getElementById('admin-panel-status');         // (ADMIN.)Seleciona área de status
+    const adminAuthenticatedAs = document.getElementById('admin-authenticated-as'); // (ADMIN.)Seleciona identificação do usuário autenticado
     const portfolioBox = portfolioSection ? portfolioSection.querySelector('.portfolio-box') : null; // (PORT.)Seleciona a caixa interna do portfólio
     const contactBox = contactModal ? contactModal.querySelector('.contact-box') : null; // (CONTATO)Seleciona a caixa interna do modal de contatos
     const videoModalClose = videoModal ? videoModal.querySelector('.video-modal-close') : null; // (VIDEO)Seleciona botão de fechar da visualização
@@ -709,6 +717,38 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     const ADMIN_TOKEN_STORAGE_KEY = 'imaginearte_admin_token';
     const ADMIN_USERNAME_STORAGE_KEY = 'imaginearte_admin_username';
 
+    const loadVideoCatalog = async () => {                                        // (VIDEO.)Atualiza listas a partir dos arquivos do servidor
+        try {
+            const response = await fetch(`${API_BASE}/api/videos`);                // (VIDEO.)Busca catálogo atual incluindo uploads recentes
+            if (!response.ok) {                                                     // (VIDEO.)Mantém fallback local quando API falhar
+                return;
+            }
+
+            const catalog = await response.json();                                 // (VIDEO.)Converte resposta para objeto de categorias
+            const replaceItems = (target, items) => {                              // (VIDEO.)Substitui lista somente quando houver dados válidos
+                if (!Array.isArray(items) || items.length === 0) {                 // (VIDEO.)Preserva fallback quando pasta está vazia
+                    return;
+                }
+                target.splice(0, target.length, ...items);                         // (VIDEO.)Atualiza array constante sem quebrar referências
+            };
+
+            replaceItems(craftingVideos, catalog.artesanato);                      // (VIDEO.)Atualiza artesanato
+            replaceItems(commercialCraftVideos, catalog.comercial);                // (VIDEO.)Atualiza comercial
+            replaceItems(institutionalVideos, catalog.institucionais);             // (VIDEO.)Atualiza institucionais
+            if (Array.isArray(catalog.residencial) && catalog.residencial.length > 0) { // (VIDEO.)Substitui aviso quando houver residencial real
+                replaceItems(homeCraftsmanship, catalog.residencial);               // (VIDEO.)Atualiza residencial
+            }
+
+            const updatedBackground = institutionalVideos.find((item) => item.name === 'Publicidade'); // (VIDEO.)Localiza fundo atualizado
+            if (backgroundVideoSource && updatedBackground) {                       // (VIDEO.)Atualiza fundo após catálogo remoto
+                backgroundVideoSource.src = updatedBackground.src;                 // (VIDEO.)Aplica URL codificada do vídeo
+                backgroundVideo.load();                                            // (VIDEO.)Recarrega mídia com a nova fonte
+            }
+        } catch (error) {
+            console.error('Erro ao carregar catálogo de vídeos:', error);           // (VIDEO.)Registra falha sem quebrar a página
+        }
+    };
+
     const getAdminTokenHeader = () => {                                            // (DEP.)Monta cabecalho de admin quando token foi salvo no navegador
         const token = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY);
         const cleanToken = token ? token.trim() : '';
@@ -767,6 +807,92 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         localStorage.setItem(ADMIN_USERNAME_STORAGE_KEY, cleanUsername);
         localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, token);
         return true;
+    };
+
+    const setAdminPanelStatus = (message, isError = false) => {                    // (ADMIN.)Exibe resultado das ações administrativas
+        if (!adminPanelStatus) return;                                              // (ADMIN.)Interrompe quando o painel não existe
+        adminPanelStatus.textContent = message;                                    // (ADMIN.)Atualiza mensagem acessível de status
+        adminPanelStatus.classList.toggle('is-error', isError);                    // (ADMIN.)Aplica destaque visual para erros
+    };
+
+    const setAdminPanelAuthenticated = (username) => {                             // (ADMIN.)Alterna o painel entre login e upload
+        const authenticated = Boolean(username && getAdminTokenHeader()['X-Admin-Token']); // (ADMIN.)Confirma usuário e token local
+        if (adminLoginForm) adminLoginForm.hidden = authenticated;                 // (ADMIN.)Esconde login após autenticação
+        if (adminUploadForm) adminUploadForm.hidden = !authenticated;               // (ADMIN.)Mostra upload apenas para administradores
+        if (adminAuthenticatedAs) adminAuthenticatedAs.textContent = authenticated ? `Conectado como ${username}.` : ''; // (ADMIN.)Identifica sessão ativa
+    };
+
+    const openAdminPanel = () => {                                                  // (ADMIN.)Abre o painel administrativo
+        if (!adminPanel) return;                                                    // (ADMIN.)Interrompe quando o painel não existe
+        adminPanel.style.display = 'block';                                        // (ADMIN.)Exibe o overlay do painel
+        adminPanel.setAttribute('aria-hidden', 'false');                           // (ADMIN.)Atualiza estado para tecnologias assistivas
+        setAdminPanelStatus('');                                                    // (ADMIN.)Limpa mensagem anterior
+        const savedUsername = localStorage.getItem(ADMIN_USERNAME_STORAGE_KEY) || ''; // (ADMIN.)Recupera usuário conhecido
+        const savedToken = localStorage.getItem(ADMIN_TOKEN_STORAGE_KEY) || '';    // (ADMIN.)Recupera token salvo
+        setAdminPanelAuthenticated(savedToken ? savedUsername : '');                // (ADMIN.)Reaproveita sessão existente quando houver
+        const firstField = adminUploadForm && !adminUploadForm.hidden ? adminUploadForm.querySelector('select') : document.getElementById('admin-username'); // (ADMIN.)Escolhe primeiro campo útil
+        if (firstField) firstField.focus();                                         // (ADMIN.)Facilita o início da interação
+    };
+
+    const closeAdminPanel = () => {                                                 // (ADMIN.)Fecha o painel administrativo
+        if (!adminPanel) return;                                                    // (ADMIN.)Interrompe quando o painel não existe
+        adminPanel.style.display = 'none';                                         // (ADMIN.)Oculta o overlay do painel
+        adminPanel.setAttribute('aria-hidden', 'true');                            // (ADMIN.)Atualiza estado acessível
+    };
+
+    const uploadAdminVideo = async (event) => {                                    // (ADMIN.)Envia vídeo bruto para o endpoint protegido
+        event.preventDefault();                                                     // (ADMIN.)Impede recarregamento da página
+        const category = document.getElementById('admin-video-category')?.value || ''; // (ADMIN.)Lê categoria escolhida
+        const fileInput = document.getElementById('admin-video-file');              // (ADMIN.)Seleciona campo de arquivo
+        const file = fileInput?.files?.[0];                                         // (ADMIN.)Obtém o arquivo escolhido
+        const maxBytes = 500 * 1024 * 1024;                                        // (ADMIN.)Replica limite máximo do servidor
+
+        if (!file || !file.name.toLowerCase().endsWith('.mp4')) {                  // (ADMIN.)Aceita somente vídeos MP4
+            setAdminPanelStatus('Selecione um arquivo MP4.', true);                // (ADMIN.)Informa seleção inválida
+            return;                                                                 // (ADMIN.)Interrompe envio inválido
+        }
+
+        if (file.size <= 0 || file.size > maxBytes) {                               // (ADMIN.)Bloqueia arquivos vazios ou grandes demais
+            setAdminPanelStatus('O vídeo deve ter entre 1 byte e 500 MB.', true);  // (ADMIN.)Informa limite permitido
+            return;                                                                 // (ADMIN.)Interrompe envio inválido
+        }
+
+        const submitButton = adminUploadForm.querySelector('.admin-action-button'); // (ADMIN.)Seleciona botão de envio
+        if (submitButton) submitButton.disabled = true;                            // (ADMIN.)Evita envios duplicados
+        setAdminPanelStatus('Enviando vídeo...');                                   // (ADMIN.)Indica processamento em andamento
+
+        try {
+            const response = await fetch(`${API_BASE}/api/admin/videos`, {          // (ADMIN.)Envia arquivo diretamente ao servidor
+                method: 'POST',                                                     // (ADMIN.)Usa método de criação do recurso
+                headers: {
+                    ...getAdminTokenHeader(),                                       // (ADMIN.)Autoriza o upload
+                    'X-Video-Category': category,                                  // (ADMIN.)Informa pasta de destino
+                    'X-Video-Name': encodeURIComponent(file.name),                 // (ADMIN.)Informa nome original de forma segura
+                    'Content-Type': 'application/octet-stream'                     // (ADMIN.)Define corpo binário
+                },
+                body: file                                                          // (ADMIN.)Envia o conteúdo binário sem conversão base64
+            });
+            const data = await response.json().catch(() => ({}));                  // (ADMIN.)Lê resposta estruturada quando disponível
+
+            if (response.status === 401) {                                         // (ADMIN.)Descarta token rejeitado
+                localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);                  // (ADMIN.)Remove credencial inválida
+                setAdminPanelAuthenticated('');                                    // (ADMIN.)Retorna ao formulário de login
+                setAdminPanelStatus('Sessão expirada. Entre novamente.', true);    // (ADMIN.)Informa motivo da falha
+                return;                                                             // (ADMIN.)Interrompe após rejeição
+            }
+
+            if (!response.ok) {                                                     // (ADMIN.)Trata falhas de validação ou servidor
+                throw new Error(data.error || `HTTP ${response.status}`);          // (ADMIN.)Propaga mensagem compreensível
+            }
+
+            adminUploadForm.reset();                                                // (ADMIN.)Limpa o formulário após sucesso
+            setAdminPanelStatus(`Vídeo enviado como ${data.name}. Recarregue a página para exibi-lo.`); // (ADMIN.)Confirma caminho salvo
+        } catch (error) {
+            console.error('Erro no upload administrativo:', error);                 // (ADMIN.)Registra diagnóstico técnico
+            setAdminPanelStatus(`Não foi possível enviar o vídeo: ${error.message}`, true); // (ADMIN.)Mostra falha ao usuário
+        } finally {
+            if (submitButton) submitButton.disabled = false;                        // (ADMIN.)Libera novo envio
+        }
     };
 
     const exibirErroDepoimentos = (mensagem) => {                                    // (DEP.)Mostra um aviso amigável quando a API falha
@@ -1258,6 +1384,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         depoimentosForm.addEventListener('submit', salvarDepoimento);               // (DEP.)Escuta o envio do formulário
     }
 
+    loadVideoCatalog();                                                             // (VIDEO.)Carrega uploads e arquivos atuais do servidor
     carregarEstados();                                                              // (DEP.)Carrega estados válidos no formulário
     carregarDepoimentos();                                                          // (DEP.)Carrega depoimentos ao iniciar a página
 
@@ -1307,6 +1434,68 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
                 }
             }, 0);
         });                                                                           // (DEP.)Fim do handler de clique
+    }
+
+    if (adminPanelOpen) {                                                           // (ADMIN.)Verifica botão de abertura do painel
+        adminPanelOpen.addEventListener('click', openAdminPanel);                   // (ADMIN.)Abre a administração ao clicar
+    }
+
+    if (adminPanelClose) {                                                          // (ADMIN.)Verifica botão de fechamento do painel
+        adminPanelClose.addEventListener('click', closeAdminPanel);                 // (ADMIN.)Fecha a administração ao clicar
+    }
+
+    if (adminPanel) {                                                               // (ADMIN.)Permite fechar ao clicar fora da caixa
+        adminPanel.addEventListener('click', (event) => {                           // (ADMIN.)Observa cliques no overlay
+            if (event.target === adminPanel) {                                      // (ADMIN.)Confirma clique fora do conteúdo
+                closeAdminPanel();                                                 // (ADMIN.)Fecha o painel
+            }
+        });                                                                          // (ADMIN.)Fim do handler do overlay
+    }
+
+    if (adminLoginForm) {                                                           // (ADMIN.)Verifica formulário de login
+        adminLoginForm.addEventListener('submit', async (event) => {               // (ADMIN.)Autentica sem prompts do navegador
+            event.preventDefault();                                                 // (ADMIN.)Impede recarregamento
+            const username = document.getElementById('admin-username')?.value.trim() || ''; // (ADMIN.)Lê usuário informado
+            const password = document.getElementById('admin-password')?.value || ''; // (ADMIN.)Lê senha informada
+
+            if (!username || !password) {                                           // (ADMIN.)Valida campos obrigatórios
+                setAdminPanelStatus('Informe usuário e senha.', true);             // (ADMIN.)Informa preenchimento ausente
+                return;                                                             // (ADMIN.)Interrompe login inválido
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {        // (ADMIN.)Chama autenticação da API
+                    method: 'POST',                                                 // (ADMIN.)Usa endpoint de login
+                    headers: { 'Content-Type': 'application/json' },                // (ADMIN.)Define payload JSON
+                    body: JSON.stringify({ username, password })                    // (ADMIN.)Envia credenciais
+                });
+                const data = await response.json().catch(() => ({}));              // (ADMIN.)Lê resposta da API
+
+                if (!response.ok || !data.token) {                                  // (ADMIN.)Recusa credencial inválida
+                    throw new Error(data.error || 'Credenciais inválidas.');        // (ADMIN.)Apresenta falha de autenticação
+                }
+
+                localStorage.setItem(ADMIN_USERNAME_STORAGE_KEY, username);          // (ADMIN.)Guarda usuário para a sessão seguinte
+                localStorage.setItem(ADMIN_TOKEN_STORAGE_KEY, data.token);          // (ADMIN.)Guarda token para chamadas protegidas
+                adminLoginForm.reset();                                             // (ADMIN.)Limpa campos sensíveis
+                setAdminPanelAuthenticated(username);                               // (ADMIN.)Mostra ferramentas administrativas
+                setAdminPanelStatus('Login realizado.');                            // (ADMIN.)Confirma autenticação
+            } catch (error) {
+                setAdminPanelStatus(error.message, true);                           // (ADMIN.)Exibe erro de autenticação
+            }
+        });                                                                          // (ADMIN.)Fim do handler de login
+    }
+
+    if (adminUploadForm) {                                                          // (ADMIN.)Verifica formulário de upload
+        adminUploadForm.addEventListener('submit', uploadAdminVideo);              // (ADMIN.)Conecta envio de vídeo
+    }
+
+    if (adminLogout) {                                                              // (ADMIN.)Verifica botão de saída
+        adminLogout.addEventListener('click', () => {                              // (ADMIN.)Encerra sessão administrativa
+            localStorage.removeItem(ADMIN_TOKEN_STORAGE_KEY);                      // (ADMIN.)Remove token salvo
+            setAdminPanelAuthenticated('');                                        // (ADMIN.)Oculta formulário protegido
+            setAdminPanelStatus('Sessão encerrada.');                              // (ADMIN.)Confirma saída
+        });                                                                          // (ADMIN.)Fim do handler de saída
     }
 
     if (institutionalMenu && institutionalSubmenu) {                                // (INST.)Controla o submenu de Institucional
