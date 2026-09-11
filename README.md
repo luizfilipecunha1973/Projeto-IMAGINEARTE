@@ -24,7 +24,7 @@ O objetivo principal e apresentar os servicos da empresa, exibir trabalhos em vi
 
 - Hero com logo oficial em [imagens/logosite.png](imagens/logosite.png)
 - Titulo e slogan da empresa
-- Video de fundo carregado de [videos/institucionais/Publicidade.mp4](videos/institucionais/Publicidade.mp4)
+- Video de fundo carregado de [videos/institucionais/002-Publicidade.mp4](videos/institucionais/002-Publicidade.mp4)
 - Controle de audio de fundo com botao de mudo/volume no hero
 
 ### Menu principal
@@ -133,28 +133,28 @@ IMAGINEARTE/
 
 ### Artesanato
 
-- Sagrada Familia.mp4
-- Coracoes Sagrada Familia.mp4
-- Santo Antonio.mp4
-- Nossa Senhora.mp4
-- Mesa Cigana.mp4
-- India.mp4
-- Sao Jorge.mp4
+- 001-Coracoes Sagrada Familia.mp4
+- 002-India.mp4
+- 003-Mesa Cigana.mp4
+- 004-Nossa Senhora.mp4
+- 005-Sagrada Familia.mp4
+- 006-Santo Antonio.mp4
+- 007-Sao Jorge.mp4
 
 ### Comercial
 
-- Orto Lima.mp4
-- Be Happy.mp4
-- Logo.mp4
-- Encrustacao.mp4
-- Barbearia Rexexo.mp4
+- 001-Barbearia Rexexo.mp4
+- 002-Be Happy.mp4
+- 003-Encrustacao.mp4
+- 004-Logo.mp4
+- 005-Orto Lima.mp4
 
 ### Institucionais
 
-- Lancamento.mp4
-- Publicidade.mp4
+- 001-Lancamento.mp4
+- 002-Publicidade.mp4
 
-Observacao: a categoria Residencial existe no menu, mas no momento exibe apenas o aviso Em breve.
+Observacao: a categoria Residencial existe no menu, mas permanece com o aviso Em breve ate que sejam fornecidos videos dessa categoria.
 
 ## Como executar
 
@@ -382,10 +382,10 @@ Exemplo de payload:
 
 ## Melhorias futuras
 
-- Area residencial com conteudo real
-- Painel administrativo para moderacao de depoimentos
+- Area residencial com conteudo real, dependente do envio dos videos correspondentes
+- Painel administrativo dedicado para moderacao de depoimentos; atualmente a moderacao usa os endpoints protegidos e o fluxo de login/token do frontend
 - Upload de novos videos via interface
-- Deploy com HTTPS e dominio proprio
+- Validacao operacional do deploy na Hostinger, incluindo health check, depoimentos, exclusao autenticada e persistencia apos reinicio
 
 ## Creditos
 
