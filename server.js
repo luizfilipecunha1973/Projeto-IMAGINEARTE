@@ -1,3 +1,8 @@
+
+const homeCrafts = [
+    { name: 'Barbearia Rexexo', src: './img/comercial/001-Barbearia Rexexo.mp4' }   
+]
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');

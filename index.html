@@ -19,7 +19,7 @@
 
     <!-- Vídeo de fundo: arquivo localizado na pasta de imagens do projeto -->
     <video class="bg-video" autoplay muted loop playsinline preload="auto" poster="./imagens/Logo%20fundo%20HEX%20%23ede8d0.png" aria-hidden="true">
-        <source src="./videos/institucionais/Publicidade.mp4" type="video/mp4">
+        <source type="video/mp4"> <!-- src preenchido via script.js a partir do array institutionalVideos -->
         Seu navegador não suporta vídeo em background.
     </video>
 
@@ -42,28 +42,7 @@
         </section>
 
         <section class="conteiner-menu"> <!-- Define uma seção temática da página, agrupando conteúdo relacionado -->
-            <header>  <!-- Representa o cabeçalho da página ou de uma seção, contendo títulos, logos ou navegação -->
-                <a class="menu home-link" href="index.html">Home</a> <!-- SERV. Link principal Home -->
-                <a class="menu quem-somos-link" href="#quem-somos">Quem Somos</a> <!-- SERV. Link principal Quem Somos -->
-                <div class="menu-item services-menu"> <!-- SERV. Container do submenu de Serviços -->
-                    <a class="menu" href="#">Serviços</a> <!-- SERV. Link principal Serviços -->
-                    <div class="submenu"> <!-- SERV. Caixa com opções de serviços -->
-                        <a href="#" class="artesanato-link">Usinagem Artesanato</a> <!-- SERV. Link de serviço -->
-                        <a href="#" class="comercial-link">Usinagem Comercial</a> <!-- SERV. Link de serviço -->
-                        <a href="#" class="residencial-link">Usinagem Residencial</a> <!-- SERV. Link de serviço -->
-                    </div>
-                </div>
-                <a class="menu portfolio-link">Portfólio</a> <!-- SERV. Link principal Portfólio -->
-                <div class="menu-item institutional-menu"> <!-- INST. Container do submenu de Institucional -->
-                    <a class="menu" href="#">Institucional</a> <!-- INST. Link principal Institucional -->
-                    <div class="submenu institutional-submenu"> <!-- INST. Caixa com opções de Institucional -->
-                        <a href="#" class="institucional-contato-link">Contato</a> <!-- INST. Link de Contato -->
-                        <a href="#" class="institucional-videos-link">Videos</a> <!-- INST. Link de Vídeos -->
-                        <a href="#" class="depoimentos-link">Depoimentos</a> <!-- INST. Link de Depoimentos -->
-                    </div>
-                </div>
-            </header>
-
+            <header></header> <!-- Cabeçalho: itens do menu inseridos pelo script.js -->
         </section>
 
         <section id="portfolio" class="portfolio-section" style="display: none;"> <!-- PORT. Seção de exibição do portfólio -->
@@ -89,8 +68,9 @@
             <div id="artesanato-grid" class="artesanato-grid"></div> <!-- ART. Grade de vídeos e descrições -->
         </section>
 
-        <section id="usinagem-residencial" class="residencial-window" style="display: none;"> <!-- RES. Janela pequena de aviso do residencial -->
-            <p>Em breve</p> <!-- RES. Texto de aviso temporário -->
+        <section id="usinagem-residencial" class="residencial-window" style="display: none;"> <!-- RES. Janela da usinagem residencial -->
+            <h2>Usinagem Residencial</h2> <!-- RES. Título da janela -->
+            <div id="residencial-grid" class="artesanato-grid"></div> <!-- RES. Grade de vídeos e descrições -->
         </section>
 
         <section id="institucional-videos" class="institucional-videos-window" style="display: none;"> <!-- INST. Janela de vídeos institucionais -->

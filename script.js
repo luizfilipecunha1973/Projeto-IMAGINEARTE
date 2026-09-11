@@ -1,5 +1,111 @@
+
+const menu = [                                                                       // (MENU)Fonte única de dados dos itens principais do menu
+    { name: 'Home', className: 'home-link', href: 'index.html' },                 // (MENU)Item que leva para a página inicial
+    { name: 'Quem Somos', className: 'quem-somos-link', href: '#quem-somos' },     // (MENU)Item que abre a seção Quem Somos
+    { name: 'Serviços', wrapperClass: 'services-menu', hasSubmenu: true },         // (MENU)Item com submenu de Serviços, preenchido mais abaixo
+    { name: 'Portfólio', className: 'portfolio-link' },                           // (MENU)Item que abre o Portfólio
+    { name: 'Institucional', wrapperClass: 'institutional-menu', submenuExtraClass: 'institutional-submenu', hasSubmenu: true } // (MENU)Item com submenu Institucional, preenchido mais abaixo
+]                                                                                     // (MENU)Fim da lista de itens principais do menu
+
+const servicesSubmenu = [                                                            // (SERV.)Fonte única de dados dos itens do submenu de Serviços
+    { name: 'Usinagem Artesanato', className: 'artesanato-link' },                   // (SERV.)Item que abre a janela de artesanato
+    { name: 'Usinagem Comercial', className: 'comercial-link' },                     // (SERV.)Item que abre a janela comercial
+    { name: 'Usinagem Residencial', className: 'residencial-link' }                  // (SERV.)Item que abre a janela residencial
+]                                                                                     // (SERV.)Fim da lista de itens do submenu de Serviços
+
+const institutionalSubmenuItems = [                                                  // (INST.)Fonte única de dados dos itens do submenu Institucional
+    { name: 'Contato', className: 'institucional-contato-link' },                    // (INST.)Item que abre a caixa de contato
+    { name: 'Videos', className: 'institucional-videos-link' },                      // (INST.)Item que abre a janela de vídeos institucionais
+    { name: 'Depoimentos', className: 'depoimentos-link' }                           // (INST.)Item que abre a seção de depoimentos
+]                                                                                     // (INST.)Fim da lista de itens do submenu Institucional
+
+const craftingVideos = [
+    { name: 'Sagrada Família', src: './videos/artesanato/001-Corações Sagrada Família.mp4' },
+    { name: 'Índia', src: './videos/artesanato/002-India.mp4' },
+    { name: 'Mesa Cigana', src: './videos/artesanato/003-Mesa Cigana.mp4' },
+    { name: 'Nossa Senhora', src: './videos/artesanato/004-Nossa Senhora.mp4' },
+    { name: 'Sagrada Família', src: './videos/artesanato/005-Sagrada Família.mp4' },
+    { name: 'Santo Antônio', src: './videos/artesanato/006-Santo Antônio.mp4' },
+    { name: 'São Jorge', src: './videos/artesanato/007-São Jorge.mp4' }
+]
+
+const commercialCraftVideos = [
+    { name: 'Barbearia Rexexo', src: './videos/comercial/001-Barbearia Rexexo.mp4' },
+    { name: 'Be Happy', src: './videos/comercial/002-Be Happy.mp4' },
+    { name: 'Encrustação', src: './videos/comercial/003-Encrustação.mp4' },
+    { name: 'Logo', src: './videos/comercial/004-Logo.mp4' },
+    { name: 'Orto Lima', src: './videos/comercial/005-Orto Lima.mp4' }
+];
+
+const homeCraftsmanship = [
+    { name: 'EM BREVE', src: '' },
+]
+
+const institutionalVideos = [                                                        // (INST.)Fonte única de dados dos vídeos institucionais, inclui o vídeo usado no fundo do site
+    { name: 'Lançamento', src: './videos/institucionais/001-Lancamento.mp4' },
+    { name: 'Publicidade', src: './videos/institucionais/002-Publicidade.mp4' }
+]
+
 document.addEventListener('DOMContentLoaded', () =>  {                              // (HOME)Espera o carregamento completo do HTML antes de executar o script
+    const menuHeader = document.querySelector('.conteiner-menu header');            // (MENU)Seleciona o cabeçalho onde os itens serão inseridos
+
+    if (menuHeader) {                                                               // (MENU)Verifica se o cabeçalho existe na página
+        let menuHtml = ''                                                            // (MENU)Acumula o HTML montado a cada volta do forEach
+
+        menu.forEach((item) => {                                                     // (MENU)Percorre cada item para montar o HTML do menu
+            if (item.hasSubmenu) {                                                   // (MENU)Trata itens que possuem submenu próprio
+                const submenuClass = item.submenuExtraClass ? `submenu ${item.submenuExtraClass}` : 'submenu' // (MENU)Soma classe extra do submenu quando existir
+
+                menuHtml += `
+                    <div class="menu-item ${item.wrapperClass}">
+                        <a class="menu" href="#">${item.name}</a>
+                        <div class="${submenuClass}"></div>
+                    </div>
+                `                                                                    // (MENU)Soma o item com container de submenu vazio
+                return                                                               // (MENU)Encerra esta volta antes de gerar o link simples
+            }
+
+            const hrefAttr = item.href ? ` href="${item.href}"` : ''                 // (MENU)Só adiciona href quando o item define um destino
+
+            menuHtml += `<a class="menu ${item.className}"${hrefAttr}>${item.name}</a>` // (MENU)Soma o link simples do item
+        })                                                                            // (MENU)Fim do forEach que monta o HTML do menu
+
+        menuHeader.innerHTML = menuHtml                                              // (MENU)Insere o HTML acumulado no cabeçalho
+    }                                                                                // (MENU)Fim da verificação do cabeçalho
+
+    const servicesSubmenuBox = document.querySelector('.services-menu .submenu');   // (SERV.)Seleciona a caixa onde os links serão inseridos
+
+    if (servicesSubmenuBox) {                                                       // (SERV.)Verifica se a caixa do submenu existe na página
+        let servicesSubmenuHtml = ''                                                 // (SERV.)Acumula o HTML montado a cada volta do forEach
+
+        servicesSubmenu.forEach((item) => {                                          // (SERV.)Percorre cada item do array para montar o HTML
+            servicesSubmenuHtml += `<a href="#" class="${item.className}">${item.name}</a>` // (SERV.)Soma o link usando os dados do item atual
+        })                                                                            // (SERV.)Fim do forEach que monta o HTML do submenu
+
+        servicesSubmenuBox.innerHTML = servicesSubmenuHtml                           // (SERV.)Insere o HTML acumulado na caixa
+    }                                                                                // (SERV.)Fim da verificação da caixa do submenu
+
+    const institutionalSubmenuBox = document.querySelector('.institutional-menu .submenu'); // (INST.)Seleciona a caixa onde os links serão inseridos
+
+    if (institutionalSubmenuBox) {                                                  // (INST.)Verifica se a caixa do submenu existe na página
+        let institutionalSubmenuHtml = ''                                            // (INST.)Acumula o HTML montado a cada volta do forEach
+
+        institutionalSubmenuItems.forEach((item) => {                               // (INST.)Percorre cada item do array para montar o HTML
+            institutionalSubmenuHtml += `<a href="#" class="${item.className}">${item.name}</a>` // (INST.)Soma o link usando os dados do item atual
+        })                                                                            // (INST.)Fim do forEach que monta o HTML do submenu
+
+        institutionalSubmenuBox.innerHTML = institutionalSubmenuHtml                // (INST.)Insere o HTML acumulado na caixa
+    }                                                                                // (INST.)Fim da verificação da caixa do submenu
+
     const backgroundVideo = document.querySelector('.bg-video');                    // (AUDIO)Seleciona video de fundo para controle de som
+    const backgroundVideoSource = backgroundVideo ? backgroundVideo.querySelector('source') : null; // (AUDIO)Seleciona a tag <source> do vídeo de fundo
+    const backgroundVideoData = institutionalVideos.find((item) => item.name === 'Publicidade'); // (AUDIO)Busca no array institutionalVideos o vídeo usado como fundo
+
+    if (backgroundVideoSource && backgroundVideoData) {                              // (AUDIO)Verifica se a tag e os dados do vídeo existem
+        backgroundVideoSource.src = backgroundVideoData.src;                        // (AUDIO)Aplica o caminho vindo do array como fundo do site
+        backgroundVideo.load();                                                     // (AUDIO)Recarrega o vídeo com a nova fonte definida
+    }                                                                                // (AUDIO)Fim da verificação do vídeo de fundo
+
     const backgroundAudioPlayer = document.getElementById('bg-audio-player');      // (AUDIO)Seleciona o player de áudio do layout mobile
     const backgroundAudioToggle = document.getElementById('bg-audio-toggle');      // (AUDIO)Seleciona botao de alternancia som/mudo
     const backgroundAudioVolume = document.getElementById('bg-audio-volume');      // (AUDIO)Seleciona slider de volume
@@ -18,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
     const residencialWindow = document.getElementById('usinagem-residencial');     // (RES.)Seleciona a janela pequena de Usinagem Residencial
     const usinagemWindowTitle = artesanatoWindow ? artesanatoWindow.querySelector('h2') : null; // (USI.)Seleciona o título da janela
     const artesanatoGrid = document.getElementById('artesanato-grid');             // (ART.)Seleciona a grade de vídeos do artesanato
+    const residencialGrid = document.getElementById('residencial-grid');           // (RES.)Seleciona a grade de vídeos residenciais
+    const residencialWindowTitle = residencialWindow ? residencialWindow.querySelector('h2') : null; // (RES.)Seleciona o título da janela residencial
     const servicesMenu = document.querySelector('.services-menu');                  // (SERV.)Seleciona o item Serviços
     const submenu = document.querySelector('.submenu');                             // (SERV.)Seleciona a caixa do submenu
     const menuLinks = document.querySelectorAll('.menu');                           // (QUEM)Seleciona todos os links do menu
@@ -403,6 +511,9 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         return fileName.replace(/\.[^/.]+$/, '');                                    // (VIDEO)Remove extensão para exibição no título
     };                                                                               // (VIDEO)Fim da função getDisplayNameFromSrc
 
+    const getVideoSrc = (item) => (typeof item === 'object' && item !== null) ? item.src : item; // (VIDEO)Extrai o caminho do vídeo aceitando string ou objeto {name, src}
+    const getVideoName = (item) => (typeof item === 'object' && item !== null) ? item.name : getDisplayNameFromSrc(item); // (VIDEO)Extrai o nome do vídeo aceitando string ou objeto {name, src}
+
     const syncVideoModalNavigation = () => {                                         // (VIDEO)Atualiza estado dos botões anterior/próximo
         if (!videoModalPrev || !videoModalNext) {                                    // (VIDEO)Interrompe se botões não existirem no HTML
             return;
@@ -504,9 +615,10 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         }
 
         currentVideoIndex = index;                                                   // (VIDEO)Atualiza posição atual para navegação interna
-        const rawSrc = currentVideoList[currentVideoIndex];                          // (VIDEO)Obtém caminho bruto do vídeo da lista ativa
+        const rawItem = currentVideoList[currentVideoIndex];                         // (VIDEO)Obtém item bruto (string ou objeto) da lista ativa
+        const rawSrc = getVideoSrc(rawItem);                                         // (VIDEO)Extrai o caminho do vídeo do item atual
         const safeSrc = encodeURI(rawSrc);                                           // (VIDEO)Codifica caminho para uso seguro no atributo src
-        const displayName = getDisplayNameFromSrc(rawSrc);                           // (VIDEO)Calcula título amigável para o modal
+        const displayName = getVideoName(rawItem);                                  // (VIDEO)Calcula título amigável para o modal
         openVideoModal(safeSrc, displayName);                                        // (VIDEO)Abre modal com vídeo e título correspondentes
     };                                                                               // (VIDEO)Fim da função openVideoModalByIndex
 
@@ -546,30 +658,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
 
     initializeBackgroundAudio();                                                     // (AUDIO)Ativa controles do som do video de fundo
 
-    const artesanatoVideos = [                                                      // (ART.)Lista dos vídeos da pasta de artesanato
-        './videos/artesanato/Sagrada Família.mp4',                                  // (ART.)Vídeo Sagrada Família
-        './videos/artesanato/Corações Sagrada Família.mp4',                         // (ART.)Vídeo Corações Sagrada Família
-        './videos/artesanato/Santo Antônio.mp4',                                    // (ART.)Vídeo Santo Antônio
-        './videos/artesanato/Nossa Senhora.mp4',                                    // (ART.)Vídeo Nossa Senhora
-        './videos/artesanato/Mesa Cigana.mp4',                                      // (ART.)Vídeo Mesa Cigana
-        './videos/artesanato/India.mp4',                                            // (ART.)Vídeo India
-        './videos/artesanato/São Jorge.mp4'                                         // (ART.)Vídeo São Jorge
-    ];                                                                              // (ART.)Fim da lista de vídeos de artesanato
-
-    const comercialVideos = [                                                       // (COM.)Lista dos vídeos da pasta comercial
-        './videos/comercial/Orto Lima.mp4',                                         // (COM.)Vídeo Orto Lima
-        './videos/comercial/Be Happy.mp4',                                          // (COM.)Vídeo Be Happy
-        './videos/comercial/Logo.mp4',                                              // (COM.)Vídeo Logo
-        './videos/comercial/Encrustação.mp4',                                       // (COM.)Vídeo Encrustação
-        './videos/comercial/Barbearia Rexexo.mp4'                                   // (COM.)Vídeo Barbearia Rexexo
-    ];                                                                              // (COM.)Fim da lista de vídeos comerciais
-
-    const institucionalVideos = [                                                   // (INST.)Lista dos vídeos da pasta institucional
-        './videos/institucionais/Lancamento.mp4',                                   // (INST.)Vídeo Lançamento
-        './videos/institucionais/Publicidade.mp4'                                   // (INST.)Vídeo Publicidade
-    ];                                                                              // (INST.)Fim da lista de vídeos institucionais
-
-    const renderUsinagemVideos = (videos, titulo, targetGrid = artesanatoGrid) => { // (USI.)Renderiza os vídeos na janela de usinagem
+    const renderUsinagemVideos = (videos, titulo, targetGrid = artesanatoGrid, titleElement = usinagemWindowTitle) => { // (USI.)Renderiza os vídeos na janela de usinagem
         if (!targetGrid) {                                                          // (USI.)Interrompe se a grade de vídeos não existir
             return;                                                                  // (USI.)Evita erro ao tentar renderizar sem container
         }
@@ -578,14 +667,14 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         currentVideoIndex = -1;                                                      // (VIDEO)Reseta índice ao trocar de categoria
         syncVideoModalNavigation();                                                  // (VIDEO)Sincroniza estado dos botões com nova lista
 
-        if (usinagemWindowTitle) {                                                  // (USI.)Atualiza o título da janela quando disponível
-            usinagemWindowTitle.textContent = titulo;                               // (USI.)Define o título conforme categoria selecionada
+        if (titleElement) {                                                         // (USI.)Atualiza o título da janela quando disponível
+            titleElement.textContent = titulo;                                      // (USI.)Define o título conforme categoria selecionada
         }
 
-        targetGrid.innerHTML = videos.map((src, index) => {                         // (USI.)Percorre vídeos para montar os cartões
+        targetGrid.innerHTML = videos.map((item, index) => {                        // (USI.)Percorre vídeos para montar os cartões
+            const src = getVideoSrc(item);                                          // (USI.)Extrai o caminho aceitando string ou objeto {name, src}
             const safeSrc = encodeURI(src);                                         // (USI.)Codifica o caminho para lidar com acentos e espaços
-            const fileName = src.split('/').pop() || '';                            // (USI.)Extrai o nome do arquivo a partir do caminho
-            const displayName = fileName.replace(/\.[^/.]+$/, '');                   // (USI.)Remove a extensão para exibir um título amigável
+            const displayName = getVideoName(item);                                 // (USI.)Extrai o nome amigável do item atual
 
             return `                                                                 // (USI.)Inicia template HTML do cartão
                 <article class="artesanato-card">                                   <!-- (USI.)Container do cartão de vídeo -->
@@ -930,7 +1019,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
         }, true);
     }
 
-    renderUsinagemVideos(artesanatoVideos, 'Usinagem Artesanato');                  // (ART.)Render inicial
+    renderUsinagemVideos(craftingVideos, 'Usinagem Artesanato');                    // (ART.)Render inicial
 
     if (homeLink) {                                                                 // (HOME)Verifica se o link existe na página
         homeLink.addEventListener('click', (event) => {                             // (HOME)Adiciona o evento de clique no link Home
@@ -996,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             hideQuemSomos();                                                        // (ART.)Evita sobreposição com Quem Somos
             hidePortfolio();                                                        // (ART.)Evita sobreposição com Portfólio
             hideResidencialWindow();                                                // (RES.)Garante que a janela residencial esteja fechada
-            renderUsinagemVideos(artesanatoVideos, 'Usinagem Artesanato');          // (ART.)Renderiza apenas vídeos de artesanato
+            renderUsinagemVideos(craftingVideos, 'Usinagem Artesanato');            // (ART.)Renderiza apenas vídeos de artesanato
             artesanatoWindow.style.display = 'block';                               // (ART.)Mostra a janela com os espaçamentos definidos
             closeSubmenu();                                                         // (SERV.)Fecha o submenu após o clique
         });                                                                           // (ART.)Fim do handler de clique de Artesanato
@@ -1008,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             hideQuemSomos();                                                        // (COM.)Evita sobreposição com Quem Somos
             hidePortfolio();                                                        // (COM.)Evita sobreposição com Portfólio
             hideResidencialWindow();                                                // (RES.)Garante que a janela residencial esteja fechada
-            renderUsinagemVideos(comercialVideos, 'Usinagem Comercial');            // (COM.)Renderiza apenas vídeos comerciais
+            renderUsinagemVideos(commercialCraftVideos, 'Usinagem Comercial');      // (COM.)Renderiza apenas vídeos comerciais
             artesanatoWindow.style.display = 'block';                               // (COM.)Mostra a janela com os espaçamentos definidos
             closeSubmenu();                                                         // (SERV.)Fecha o submenu após o clique
         });                                                                           // (COM.)Fim do handler de clique de Comercial
@@ -1020,7 +1109,8 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             hideQuemSomos();                                                        // (RES.)Evita sobreposição com Quem Somos
             hidePortfolio();                                                        // (RES.)Evita sobreposição com Portfólio
             hideArtesanatoWindow();                                                 // (RES.)Fecha a janela grande de usinagem
-            residencialWindow.style.display = 'block';                              // (RES.)Mostra janela pequena com aviso Em breve
+            renderUsinagemVideos(homeCraftsmanship, 'Usinagem Residencial', residencialGrid, residencialWindowTitle); // (RES.)Renderiza vídeos residenciais no grid próprio
+            residencialWindow.style.display = 'block';                              // (RES.)Mostra a janela residencial com os vídeos
             closeSubmenu();                                                         // (SERV.)Fecha o submenu após o clique
         });                                                                           // (RES.)Fim do handler de clique de Residencial
     }
@@ -1179,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', () =>  {                          
             hideArtesanatoWindow();                                                 // (ART.)Fecha a janela de usinagem
             hideResidencialWindow();                                                // (RES.)Fecha a janela residencial
             hideDepoimentos();                                                      // (DEP.)Fecha a seção de depoimentos
-            renderUsinagemVideos(institucionalVideos, 'Videos Institucionais', institucionalGrid); // (INST.)Renderiza vídeos institucionais no grid correto
+            renderUsinagemVideos(institutionalVideos, 'Videos Institucionais', institucionalGrid); // (INST.)Renderiza vídeos institucionais no grid correto
             institucionalVideosWindow.style.display = 'block';                      // (INST.)Mostra a janela
             closeInstitucionalSubmenu();                                            // (INST.)Fecha o submenu após o clique
         });                                                                           // (INST.)Fim do handler de clique
